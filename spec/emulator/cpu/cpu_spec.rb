@@ -51,48 +51,56 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
-    context 'INC B' do
-      it 'should execute instruction' do
-        mmu[0x00] = 0x04
+    [
+        {register: :b, instruction: 0x04},
+        {register: :c, instruction: 0x0C}
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
 
-        state.b.write_value(0b0000_0000)
+      context "INC #{register.upcase}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
 
-        subject.tick
+          state.send(register).write_value(0b0000_0000)
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_000)
-      end
+          subject.tick
 
-      it 'should disable zero flag if result is not zero' do
-        mmu[0x00] = 0x04
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0000_000)
+        end
 
-        state.b.write_value(0b0000_0000)
-        state.f.toggle_zero_flag(true)
+        it 'should disable zero flag if result is not zero' do
+          mmu[0x00] = instruction
 
-        subject.tick
+          state.send(register).write_value(0b0000_0000)
+          state.f.toggle_zero_flag(true)
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_0000)
-      end
+          subject.tick
 
-      it 'should disable subtract flag' do
-        mmu[0x00] = 0x04
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0000_0000)
+        end
 
-        state.b.write_value(0b0000_0000)
-        state.f.toggle_subtract_flag(true)
+        it 'should disable subtract flag' do
+          mmu[0x00] = instruction
 
-        subject.tick
+          state.send(register).write_value(0b0000_0000)
+          state.f.toggle_subtract_flag(true)
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_0000)
-      end
+          subject.tick
 
-      it 'should set half carry flag' do
-        mmu[0x00] = 0x04
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0000_0000)
+        end
 
-        state.b.write_value(0b0000_1111)
-        state.f.toggle_half_carry_flag(false)
+        it 'should set half carry flag' do
+          mmu[0x00] = instruction
 
-        subject.tick
+          state.send(register).write_value(0b0000_1111)
+          state.f.toggle_half_carry_flag(false)
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0b0001_0000, f: 0b0010_0000)
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0001_0000, f: 0b0010_0000)
+        end
       end
     end
 
