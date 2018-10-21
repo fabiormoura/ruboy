@@ -1,17 +1,17 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op05 < ::Emulator::Cpu::Instruction::Instruction
+      class Op0d < ::Emulator::Cpu::Instruction::Instruction
         include ::Emulator::Cpu::Instruction::Helper::Arithmetic
 
         def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x05), cycles: 4, label: 'DEC B')
+          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x0D), cycles: 4, label: 'DEC C')
         end
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
-          decrement_byte_register(register: :b, state: state)
+          decrement_byte_register(register: :c, state: state)
         end
       end
     end
