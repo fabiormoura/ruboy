@@ -3,7 +3,7 @@ module Emulator
     module Instruction
       module Helper
         module Arithmetic
-          # @param [::Emulator::Cpu::Register::Byte] register
+          # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
           def increment_byte_register(register:, state:)
             value = state.send(register).read_value
@@ -17,7 +17,7 @@ module Emulator
             state.f.toggle_subtract_flag(false)
           end
 
-          # @param [::Emulator::Cpu::Register::Byte] register
+          # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
           def decrement_byte_register(register:, state:)
             value = state.send(register).read_value
