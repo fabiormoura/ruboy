@@ -19,7 +19,8 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op0e.new,
           ::Emulator::Cpu::Instruction::Op0f.new,
           # TODO: ::Emulator::Cpu::Instruction::Op10.new,
-          ::Emulator::Cpu::Instruction::Op11.new
+          ::Emulator::Cpu::Instruction::Op11.new,
+          ::Emulator::Cpu::Instruction::Op12.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
