@@ -25,5 +25,4 @@ module Emulator
       end
     end
   end
-
 end

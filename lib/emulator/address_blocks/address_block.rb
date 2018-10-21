@@ -19,6 +19,7 @@ module Emulator
       end
 
       def [](position)
+        position = position.read if position.is_a?(Emulator::Registers::Register)
         validate_position!(position)
         @data[position]
       end

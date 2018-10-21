@@ -16,6 +16,18 @@
 #
 require File.expand_path('../config/environment', __dir__)
 
+ActiveSupport::Dependencies.autoload_paths += %w[
+  spec/
+]
+
+RSpec::Matchers.define :match_cpu_context do |expected|
+  match do |actual|
+    expected_context = Emulator::Cpu::RuntimeContext.new
+    expected.each {|register_name, value| expected_context.send(register_name).write_value(value)}
+    actual == expected_context
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
