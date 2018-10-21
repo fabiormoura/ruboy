@@ -52,5 +52,39 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x1, b: 0xAB, c: 0x00)
       end
     end
+
+    context 'INC B' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x04
+
+        state.b.write_value(0b0000_0000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_000)
+      end
+
+      it 'should disable subtract flag' do
+        mmu[0x00] = 0x04
+
+        state.b.write_value(0b0000_0000)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x04
+
+        state.b.write_value(0b0000_1111)
+        state.f.toggle_half_carry_flag(false)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0001_0000, f: 0b0010_0000)
+      end
+    end
   end
 end
