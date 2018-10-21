@@ -140,5 +140,14 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_1111, f: 0b0110_0000)
       end
     end
+
+    context 'LD B,d8' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x06
+        mmu[0x01] = 0xCC
+        subject.tick
+        expect(state).to match_cpu_state(pc: 0x2, b: 0xCC)
+      end
+    end
   end
 end
