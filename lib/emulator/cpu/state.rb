@@ -1,6 +1,6 @@
 module Emulator
   module Cpu
-    class RuntimeContext
+    class State
       attr_reader :a, :b, :c, :d, :e, :f, :h, :l, :pc
 
       def initialize
@@ -16,7 +16,7 @@ module Emulator
       end
 
       def ==(other)
-        return false unless other.is_a?(::Emulator::Cpu::RuntimeContext) && other.class == self.class
+        return false unless other.is_a?(::Emulator::Cpu::State) && other.class == self.class
         @a == other.a &&
             @b == other.b &&
             @c == other.c &&
@@ -28,6 +28,20 @@ module Emulator
             @pc == other.pc
       end
 
+      def to_s
+        <<TEXT
+        CPU STATE
+        #{@a}
+        #{@b}
+        #{@c}
+        #{@d}
+        #{@e}
+        #{@f}
+        #{@h}
+        #{@l}
+        #{@pc}
+TEXT
+      end
     end
   end
 end

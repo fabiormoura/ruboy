@@ -20,11 +20,14 @@ ActiveSupport::Dependencies.autoload_paths += %w[
   spec/
 ]
 
-RSpec::Matchers.define :match_cpu_context do |expected|
+RSpec::Matchers.define :match_cpu_state do |expected|
   match do |actual|
-    expected_context = Emulator::Cpu::RuntimeContext.new
-    expected.each {|register_name, value| expected_context.send(register_name).write_value(value)}
-    actual == expected_context
+    @expected_state = Emulator::Cpu::State.new
+    expected.each {|register_name, value| @expected_state.send(register_name).write_value(value)}
+    actual == @expected_state
+  end
+  failure_message do |actual|
+    "expected that\n#{actual} to match\n#{@expected_state}"
   end
 end
 

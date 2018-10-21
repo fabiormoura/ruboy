@@ -31,7 +31,7 @@ module Emulator
         end
 
         def to_s
-          "#{@label}: #{@value}"
+          "#{@label}: #{@value.to_s(16)}"
         end
       end
     end
