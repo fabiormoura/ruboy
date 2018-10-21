@@ -64,6 +64,17 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_000)
       end
 
+      it 'should disable zero flag if result is not zero' do
+        mmu[0x00] = 0x04
+
+        state.b.write_value(0b0000_0000)
+        state.f.toggle_zero_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0000_0000)
+      end
+
       it 'should disable subtract flag' do
         mmu[0x00] = 0x04
 
