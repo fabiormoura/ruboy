@@ -97,5 +97,48 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x1, b: 0b0001_0000, f: 0b0010_0000)
       end
     end
+
+    context 'DEC B' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x05
+
+        state.b.write_value(0b0000_1000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0111, f: 0b0100_0000)
+      end
+
+      it 'should disable zero flag if result is not zero' do
+        mmu[0x00] = 0x05
+
+        state.b.write_value(0b0000_0010)
+        state.f.toggle_zero_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0001, f: 0b0100_0000)
+      end
+
+      it 'should enable zero flag if result is zero' do
+        mmu[0x00] = 0x05
+
+        state.b.write_value(0b0000_0001)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_0000, f: 0b1100_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x05
+
+        state.b.write_value(0b0001_0000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0b0000_1111, f: 0b0110_0000)
+      end
+    end
   end
 end
