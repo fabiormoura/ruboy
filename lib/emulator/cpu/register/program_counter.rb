@@ -3,7 +3,7 @@ module Emulator
     module Register
       class ProgramCounter < ::Emulator::Cpu::Register::Register
         def initialize(value: 0x0)
-          super(size_in_bits: 16, value: value, label: "PC")
+          super(size_in_bits: 16, value: value, label: 'PC')
         end
 
         def increment
