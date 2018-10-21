@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Nop < ::Emulator::Cpu::Instruction::Instruction
+      class Op00 < ::Emulator::Cpu::Instruction::Instruction
         def initialize
           super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x00), cycles: 4, label: 'NOP')
         end
 
-        # @param [::Emulator::Cpu::RuntimeContext] context
+        # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(context:, mmu:)
+        def execute(state:, mmu:)
         end
       end
     end

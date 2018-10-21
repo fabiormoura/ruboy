@@ -2,24 +2,25 @@ module Emulator
   module Cpu
     class Cpu
       INSTRUCTIONS = [
-          ::Emulator::Cpu::Instruction::Nop.new,
-          ::Emulator::Cpu::Instruction::LdBcD16.new,
+          ::Emulator::Cpu::Instruction::Op00.new,
+          ::Emulator::Cpu::Instruction::Op01.new,
+          ::Emulator::Cpu::Instruction::Op02.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
-      # @param [Emulator::Cpu::RuntimeContext] context
-      def initialize(mmu:, context:)
-        @context = context
+      # @param [Emulator::Cpu::State] state
+      def initialize(mmu:, state:)
+        @state = state
         @mmu = mmu
         @instructions = INSTRUCTIONS.map {|instruction| [instruction.instruction_id, instruction]}.to_h
       end
 
       def tick
-        opcode = @mmu[@context.pc.read_value]
+        opcode = @mmu[@state.pc.read_value]
         instruction = @instructions[::Emulator::Cpu::Instruction::InstructionId.new(opcode)]
-        @context.pc.increment
+        @state.pc.increment
         raise NotImplementedError if instruction.nil?
-        instruction.execute(mmu: @mmu, context: @context)
+        instruction.execute(mmu: @mmu, state: @state)
       end
     end
   end

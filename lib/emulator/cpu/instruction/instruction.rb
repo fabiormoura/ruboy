@@ -13,9 +13,9 @@ module Emulator
           @label
         end
 
-        # @param [::Emulator::Cpu::RuntimeContext] context
+        # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(context:, mmu:)
+        def execute(state:, mmu:)
           raise NotImplementedError
         end
 
