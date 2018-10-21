@@ -30,6 +30,13 @@ module Emulator
             state.f.toggle_zero_flag(updated_value == 0x0)
             state.f.toggle_subtract_flag(true)
           end
+
+          # @param [Symbol] register
+          # @param [::Emulator::Cpu::State] state
+          def increment_word_register(register:, state:)
+            value = state.send(register).read_value + 1
+            state.send(register).write_value(value)
+          end
         end
       end
     end
