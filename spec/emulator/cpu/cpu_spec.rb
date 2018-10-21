@@ -16,7 +16,8 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        {register: :bc, high_register: :b, low_register: :c, instruction: 0x01}
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0x01},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0x11}
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
