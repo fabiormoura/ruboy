@@ -29,8 +29,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       it 'should execute instruction' do
         mmu[0x00] = 0x02
 
-        state.b.write_value(0xAA)
-        state.c.write_value(0xBB)
+        state.bc.write_value(0xAABB)
         state.a.write_value(0xFF)
 
         subject.tick
@@ -44,8 +43,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       it 'should execute instruction' do
         mmu[0x00] = 0x03
 
-        state.b.write_value(0xAA)
-        state.c.write_value(0xFF)
+        state.bc.write_value(0xAAFF)
 
         subject.tick
 
@@ -241,11 +239,8 @@ RSpec.describe Emulator::Cpu::Cpu do
       it 'should execute instruction' do
         mmu[0x00] = 0x09
 
-        state.h.write_value 0x01
-        state.l.write_value 0x02
-
-        state.b.write_value 0x03
-        state.c.write_value 0x04
+        state.hl.write_value 0x0102
+        state.bc.write_value 0x0304
 
         subject.tick
 
@@ -265,11 +260,8 @@ RSpec.describe Emulator::Cpu::Cpu do
       it 'should set half carry flag' do
         mmu[0x00] = 0x09
 
-        state.h.write_value 0x0F
-        state.l.write_value 0xFF
-
-        state.b.write_value 0x0F
-        state.c.write_value 0xFF
+        state.hl.write_value 0x0FFF
+        state.bc.write_value 0x0FFF
 
         subject.tick
 
@@ -279,11 +271,8 @@ RSpec.describe Emulator::Cpu::Cpu do
       it 'should set carry flag' do
         mmu[0x00] = 0x09
 
-        state.h.write_value 0xFF
-        state.l.write_value 0xFF
-
-        state.b.write_value 0xFF
-        state.c.write_value 0xFF
+        state.hl.write_value 0xFFFF
+        state.bc.write_value 0xFFFF
 
         subject.tick
 
@@ -295,8 +284,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       it 'should execute instruction' do
         mmu[0x00] = 0x0A
 
-        state.b.write_value(0xAA)
-        state.c.write_value(0xBB)
+        state.bc.write_value(0xAABB)
 
         mmu[0xAABB] = 0xDD
 
