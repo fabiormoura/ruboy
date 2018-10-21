@@ -236,5 +236,59 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(mmu[0xCDAB + 1]).to eq(0xBB)
       end
     end
+
+    context 'ADD HL,BC' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x09
+
+        state.h.write_value 0x01
+        state.l.write_value 0x02
+
+        state.b.write_value 0x03
+        state.c.write_value 0x04
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0x03, c: 0x04, h: 0x04, l: 0x06)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x09
+
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, f: 0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x09
+
+        state.h.write_value 0x0F
+        state.l.write_value 0xFF
+
+        state.b.write_value 0x0F
+        state.c.write_value 0xFF
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0x0F, c: 0xFF, l: 0xFE, h: 0x1F, f: 0b0010_0000)
+      end
+
+      it 'should set carry flag' do
+        mmu[0x00] = 0x09
+
+        state.h.write_value 0xFF
+        state.l.write_value 0xFF
+
+        state.b.write_value 0xFF
+        state.c.write_value 0xFF
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, b: 0xFF, c: 0xFF, l: 0xFE, h: 0xFF, f: 0b0011_0000)
+      end
+    end
   end
 end

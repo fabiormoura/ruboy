@@ -31,7 +31,11 @@ module Emulator
         end
 
         def to_s
-          "#{@label}: #{@value.to_s(16)}"
+          pretty_label = @label.rjust(2, ' ')
+          hex_value = "0x#{@value.to_s(16).upcase.rjust(2, '0')}"
+          bin_value = "#{@value.to_s(2).rjust(8, '0')}"
+
+          "#{pretty_label}: #{hex_value} (#{bin_value})"
         end
       end
     end
