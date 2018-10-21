@@ -14,8 +14,7 @@ module Emulator
           high_value = mmu[state.pc.read_value]
           state.pc.increment
 
-          state.c.write_value(low_value)
-          state.b.write_value(high_value)
+          state.bc.write_values(low_value: low_value, high_value: high_value)
         end
       end
     end

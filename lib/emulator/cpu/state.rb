@@ -1,7 +1,7 @@
 module Emulator
   module Cpu
     class State
-      attr_reader :a, :b, :c, :d, :e, :f, :h, :l, :pc, :sp
+      attr_reader :a, :b, :c, :d, :e, :f, :h, :l, :af, :bc, :de, :hl, :pc, :sp
 
       def initialize
         @a = ::Emulator::Cpu::Register::Byte.new(label: 'A')
@@ -14,6 +14,11 @@ module Emulator
         @l = ::Emulator::Cpu::Register::Byte.new(label: 'L')
         @pc = ::Emulator::Cpu::Register::ProgramCounter.new
         @sp = ::Emulator::Cpu::Register::StackPointer.new
+
+        @af = ::Emulator::Cpu::Register::Word.new(low_register: @f, high_register: @a)
+        @bc = ::Emulator::Cpu::Register::Word.new(low_register: @c, high_register: @b)
+        @de = ::Emulator::Cpu::Register::Word.new(low_register: @e, high_register: @d)
+        @hl = ::Emulator::Cpu::Register::Word.new(low_register: @l, high_register: @h)
       end
 
       def ==(other)

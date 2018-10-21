@@ -9,12 +9,8 @@ module Emulator
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
-          low_value = state.c.read_value
-          high_value = state.b.read_value
-          value = ((high_value << 8) | low_value) + 1
-
-          state.c.write_value(value & 0x00FF)
-          state.b.write_value(value >> 8)
+          value = state.bc.read_value + 1
+          state.bc.write_value(value)
         end
       end
     end

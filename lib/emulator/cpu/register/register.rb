@@ -14,6 +14,7 @@ module Emulator
           @label = label
         end
 
+        # @param [Integer] value
         def write_value(value)
           raise Errors::OverflowError, "error updating register #{@label} limited to #{@size_in_bits} bits with value #{value.to_s(2)}" if (value >> @size_in_bits) > 0
           @value = value
