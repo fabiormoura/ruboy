@@ -188,14 +188,21 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
-    context 'LD B,d8' do
-      it 'should execute instruction' do
-        mmu[0x00] = 0x06
-        mmu[0x01] = 0xCC
+    [
+        {register: :b, instruction: 0x06},
+        {register: :c, instruction: 0x0E},
+        {register: :d, instruction: 0x16}
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
 
-        subject.tick
-
-        expect(state).to match_cpu_state(pc: 0x2, b: 0xCC)
+      context "LD #{register.to_s.upcase},d8" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+          mmu[0x01] = 0xAB
+          subject.tick
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0xAB)
+        end
       end
     end
 
@@ -352,22 +359,6 @@ RSpec.describe Emulator::Cpu::Cpu do
         subject.tick
 
         expect(state).to match_cpu_state(pc: 0x1, b: 0xAA, c: 0xBA)
-      end
-    end
-
-    [
-        {register: :c, instruction: 0x0E}
-    ].each do |options|
-      register = options[:register]
-      instruction = options[:instruction]
-
-      context "LD #{register.to_s.upcase},d8" do
-        it 'should execute instruction' do
-          mmu[0x00] = instruction
-          mmu[0x01] = 0xAB
-          subject.tick
-          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0xAB)
-        end
       end
     end
 
