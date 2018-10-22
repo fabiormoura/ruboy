@@ -37,6 +37,10 @@ module Emulator
             value = state.send(register).read_value + 1
             state.send(register).write_value(value)
           end
+
+          def signed_byte_value(value)
+            value > 0b0111_1111 ? (value & 0b0111_1111) - 0b1000_0000 : value
+          end
         end
       end
     end
