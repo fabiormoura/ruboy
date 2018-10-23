@@ -2,29 +2,39 @@ module Emulator
   module Cpu
     module Register
       class Flags < ::Emulator::Cpu::Register::Byte
+        CARRY_BIT = 4
+        HALF_CARRY_BIT = 5
+        SUBTRACT_BIT = 6
+        ZERO_BIT = 7
+
         def initialize
           super(label: 'F')
         end
 
         # @param [TrueClass|FalseClass] enable
         def toggle_zero_flag(enable)
-          toggle_bit(enable, 7)
+          toggle_bit(enable, ZERO_BIT)
         end
 
         # @param [TrueClass|FalseClass] enable
         def toggle_subtract_flag(enable)
-          toggle_bit(enable, 6)
+          toggle_bit(enable, SUBTRACT_BIT)
         end
 
         # https://robdor.com/2016/08/10/gameboy-emulator-half-carry-flag/
         # @param [TrueClass|FalseClass] enable
         def toggle_half_carry_flag(enable)
-          toggle_bit(enable, 5)
+          toggle_bit(enable, HALF_CARRY_BIT)
         end
 
         # @param [TrueClass|FalseClass] enable
         def toggle_carry_flag(enable)
-          toggle_bit(enable, 4)
+          toggle_bit(enable, CARRY_BIT)
+        end
+
+        # @@return [TrueClass|FalseClass]
+        def carry_flag_enabled?
+          bit_enabled?(CARRY_BIT)
         end
 
         # @param [TrueClass|FalseClass] enable
@@ -49,9 +59,10 @@ module Emulator
 
         private :disable_bit
 
-        # set_flag_zero(reg.value() == 0);
-        # set_flag_subtract(false);
-        # set_flag_half_carry((reg.value() & 0x0F) == 0x00);
+        # @param [Integer] bit
+        def bit_enabled?(bit)
+          (read_value >> bit) & 0x1 != 0x0
+        end
       end
     end
   end
