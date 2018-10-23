@@ -8,7 +8,7 @@ module Emulator
         # @param [Integer] value
         # @param [String] label
         def initialize(size_in_bits:, value: 0x0, label:)
-          raise Errors::OverflowError if (value >> size_in_bits) > 0
+          raise Emulator::Error::OverflowError if (value >> size_in_bits) > 0
           @value = value
           @size_in_bits = size_in_bits
           @label = label
@@ -16,7 +16,7 @@ module Emulator
 
         # @param [Integer] value
         def write_value(value)
-          raise Errors::OverflowError, "error updating register #{@label} limited to #{@size_in_bits} bits with value #{value.to_s(2)}" if (value >> @size_in_bits) > 0
+          raise Emulator::Error::OverflowError, "error updating register #{@label} limited to #{@size_in_bits} bits with value #{value.to_s(2)}" if (value >> @size_in_bits) > 0
           @value = value
         end
 

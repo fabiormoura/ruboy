@@ -1,5 +1,5 @@
 module Emulator
-  module Errors
+  module Error
     class ReadonlyAddressBlockError < StandardError
 
     end
