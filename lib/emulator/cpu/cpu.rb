@@ -27,7 +27,8 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op16.new,
           ::Emulator::Cpu::Instruction::Op17.new,
           ::Emulator::Cpu::Instruction::Op18.new,
-          ::Emulator::Cpu::Instruction::Op19.new
+          ::Emulator::Cpu::Instruction::Op19.new,
+          ::Emulator::Cpu::Instruction::Op1c.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
