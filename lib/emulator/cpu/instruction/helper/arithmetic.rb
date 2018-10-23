@@ -41,6 +41,23 @@ module Emulator
           def signed_byte_value(value)
             value > 0b0111_1111 ? (value & 0b0111_1111) - 0b1000_0000 : value
           end
+
+          # @param [Symbol] primary_register
+          # @param [Symbol] secondary_register
+          # @param [::Emulator::Cpu::State] state
+          def add_word_registers(primary_register:, secondary_register:, state:)
+            primary_value = state.send(primary_register).read_value
+            secondary_value = state.send(secondary_register).read_value
+
+            value = primary_value + secondary_value
+            u16_value = (primary_value + secondary_value) & 0xFFFF
+
+            state.send(primary_register).write_value(u16_value)
+
+            state.f.toggle_subtract_flag(false)
+            state.f.toggle_half_carry_flag((primary_value & 0xFFF) + (secondary_value & 0xFFF) > 0xFFF)
+            state.f.toggle_carry_flag(value >> 16 > 0)
+          end
         end
       end
     end

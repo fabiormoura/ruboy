@@ -16,8 +16,8 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        {register: :bc, high_register: :b, low_register: :c, instruction: 0x01},
-        {register: :de, high_register: :d, low_register: :e, instruction: 0x11}
+      { register: :bc, high_register: :b, low_register: :c, instruction: 0x01 },
+      { register: :de, high_register: :d, low_register: :e, instruction: 0x11 }
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -37,8 +37,8 @@ RSpec.describe Emulator::Cpu::Cpu do
 
 
     [
-        {register: :bc, high_register: :b, low_register: :c, instruction: 0x02},
-        {register: :de, high_register: :d, low_register: :e, instruction: 0x12}
+      { register: :bc, high_register: :b, low_register: :c, instruction: 0x02 },
+      { register: :de, high_register: :d, low_register: :e, instruction: 0x12 }
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -61,8 +61,8 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        {register: :bc, high_register: :b, low_register: :c, instruction: 0x03},
-        {register: :de, high_register: :d, low_register: :e, instruction: 0x13},
+      { register: :bc, high_register: :b, low_register: :c, instruction: 0x03 },
+      { register: :de, high_register: :d, low_register: :e, instruction: 0x13 },
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -83,9 +83,9 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        {register: :b, instruction: 0x04},
-        {register: :c, instruction: 0x0C},
-        {register: :d, instruction: 0x14}
+      { register: :b, instruction: 0x04 },
+      { register: :c, instruction: 0x0C },
+      { register: :d, instruction: 0x14 }
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -137,9 +137,9 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        {register: :b, instruction: 0x05},
-        {register: :c, instruction: 0x0D},
-        {register: :d, instruction: 0x15},
+      { register: :b, instruction: 0x05 },
+      { register: :c, instruction: 0x0D },
+      { register: :d, instruction: 0x15 },
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -189,9 +189,9 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        {register: :b, instruction: 0x06},
-        {register: :c, instruction: 0x0E},
-        {register: :d, instruction: 0x16}
+      { register: :b, instruction: 0x06 },
+      { register: :c, instruction: 0x0E },
+      { register: :d, instruction: 0x16 }
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -291,48 +291,62 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
-    context 'ADD HL,BC' do
-      it 'should execute instruction' do
-        mmu[0x00] = 0x09
 
-        state.hl.write_value 0x0102
-        state.bc.write_value 0x0304
+    [
+      { primary_register: :hl, secondary_register: :bc, primary_high_register: :h, primary_low_register: :l, secondary_high_register: :b, secondary_low_register: :c, instruction: 0x09 },
+      { primary_register: :hl, secondary_register: :de, primary_high_register: :h, primary_low_register: :l, secondary_high_register: :d, secondary_low_register: :e, instruction: 0x19 },
+    ].each do |options|
+      primary_register = options[:primary_register]
+      secondary_register = options[:secondary_register]
+      primary_high_register = options[:primary_high_register]
+      primary_low_register = options[:primary_low_register]
+      secondary_high_register = options[:secondary_high_register]
+      secondary_low_register = options[:secondary_low_register]
+      instruction = options[:instruction]
 
-        subject.tick
+      context "ADD #{primary_low_register.to_s.upcase},#{secondary_low_register.to_s.upcase}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0x03, c: 0x04, h: 0x04, l: 0x06)
-      end
+          state.send(primary_register).write_value 0x0102
+          state.send(secondary_register).write_value 0x0304
 
-      it 'should reset subtract flag' do
-        mmu[0x00] = 0x09
+          subject.tick
 
-        state.f.toggle_subtract_flag(true)
+          expect(state).to match_cpu_state(pc: 0x1, :"#{secondary_high_register}" => 0x03, :"#{secondary_low_register}" => 0x04, :"#{primary_high_register}" => 0x04, :"#{primary_low_register}" => 0x06)
+        end
 
-        subject.tick
+        it 'should reset subtract flag' do
+          mmu[0x00] = instruction
 
-        expect(state).to match_cpu_state(pc: 0x1, f: 0b0000_0000)
-      end
+          state.f.toggle_subtract_flag(true)
 
-      it 'should set half carry flag' do
-        mmu[0x00] = 0x09
+          subject.tick
 
-        state.hl.write_value 0x0FFF
-        state.bc.write_value 0x0FFF
+          expect(state).to match_cpu_state(pc: 0x1, f: 0b0000_0000)
+        end
 
-        subject.tick
+        it 'should set half carry flag' do
+          mmu[0x00] = instruction
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0x0F, c: 0xFF, l: 0xFE, h: 0x1F, f: 0b0010_0000)
-      end
+          state.send(primary_register).write_value 0x0FFF
+          state.send(secondary_register).write_value 0x0FFF
 
-      it 'should set carry flag' do
-        mmu[0x00] = 0x09
+          subject.tick
 
-        state.hl.write_value 0xFFFF
-        state.bc.write_value 0xFFFF
+          expect(state).to match_cpu_state(pc: 0x1, :"#{secondary_high_register}" => 0x0F, :"#{secondary_low_register}" => 0xFF, :"#{primary_high_register}" => 0x1F, :"#{primary_low_register}" => 0xFE, f: 0b0010_0000)
+        end
 
-        subject.tick
+        it 'should set carry flag' do
+          mmu[0x00] = instruction
 
-        expect(state).to match_cpu_state(pc: 0x1, b: 0xFF, c: 0xFF, l: 0xFE, h: 0xFF, f: 0b0011_0000)
+          state.send(primary_register).write_value 0xFFFF
+          state.send(secondary_register).write_value 0xFFFF
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1, :"#{secondary_high_register}" => 0xFF, :"#{secondary_low_register}" => 0xFF, :"#{primary_high_register}" => 0xFF, :"#{primary_low_register}" => 0xFE, f: 0b0011_0000)
+        end
       end
     end
 
