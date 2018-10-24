@@ -30,8 +30,11 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op19.new,
           ::Emulator::Cpu::Instruction::Op1c.new,
           ::Emulator::Cpu::Instruction::Op1d.new,
+          ::Emulator::Cpu::Instruction::Op1e.new,
           ::Emulator::Cpu::Instruction::Op2d.new,
-          ::Emulator::Cpu::Instruction::Op3d.new
+          ::Emulator::Cpu::Instruction::Op2e.new,
+          ::Emulator::Cpu::Instruction::Op3d.new,
+          ::Emulator::Cpu::Instruction::Op3e.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
@@ -44,6 +47,8 @@ module Emulator
 
       def tick
         opcode = @mmu[@state.pc.read_value]
+        # puts @state
+        # puts "0x#{opcode.to_s(16).rjust(1, '0')}"
         instruction = @instructions[::Emulator::Cpu::Instruction::InstructionId.new(opcode)]
         @state.pc.increment
         raise NotImplementedError if instruction.nil?

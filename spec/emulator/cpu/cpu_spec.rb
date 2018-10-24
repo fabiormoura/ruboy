@@ -195,7 +195,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     [
       { register: :b, instruction: 0x06 },
       { register: :c, instruction: 0x0E },
-      { register: :d, instruction: 0x16 }
+      { register: :d, instruction: 0x16 },
+      { register: :e, instruction: 0x1E },
+      { register: :l, instruction: 0x2E },
+      { register: :a, instruction: 0x3E }
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
