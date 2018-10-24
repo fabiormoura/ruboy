@@ -17,7 +17,8 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     [
       { register: :bc, high_register: :b, low_register: :c, instruction: 0x01 },
-      { register: :de, high_register: :d, low_register: :e, instruction: 0x11 }
+      { register: :de, high_register: :d, low_register: :e, instruction: 0x11 },
+      { register: :hl, high_register: :h, low_register: :l, instruction: 0x21 }
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -32,6 +33,16 @@ RSpec.describe Emulator::Cpu::Cpu do
           subject.tick
           expect(state).to match_cpu_state(pc: 0x3, :"#{high_register}" => 0xCD, :"#{low_register}" => 0xAB)
         end
+      end
+    end
+
+    context "LD SP,d16" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x31
+        mmu[0x01] = 0xAB
+        mmu[0x02] = 0xCD
+        subject.tick
+        expect(state).to match_cpu_state(pc: 0x3, :sp => 0xCDAB)
       end
     end
 
