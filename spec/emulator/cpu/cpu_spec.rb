@@ -71,6 +71,34 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context "LD (HL+),A" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x22
+
+        state.hl.write_value(0xAABB)
+        state.a.write_value(0xFF)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xAA, l: 0xBC, a: 0xFF)
+        expect(mmu[0xAABB]).to eq(0xFF)
+      end
+    end
+
+    context "LD (HL-),A" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x32
+
+        state.hl.write_value(0xAABB)
+        state.a.write_value(0xFF)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xAA, l: 0xBA, a: 0xFF)
+        expect(mmu[0xAABB]).to eq(0xFF)
+      end
+    end
+
     [
       { register: :bc, high_register: :b, low_register: :c, instruction: 0x03 },
       { register: :de, high_register: :d, low_register: :e, instruction: 0x13 },
