@@ -679,17 +679,30 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-      source_register: :b, target_register: :b, instruction: 0x40
+      { source_register: :b, target_register: :b, instruction: 0x40 },
+      { source_register: :c, target_register: :b, instruction: 0x41 },
+      { source_register: :d, target_register: :b, instruction: 0x42 },
+      { source_register: :e, target_register: :b, instruction: 0x43 },
+      { source_register: :h, target_register: :b, instruction: 0x44 },
+      { source_register: :l, target_register: :b, instruction: 0x45 },
+      { source_register: :a, target_register: :b, instruction: 0x47 },
+      { source_register: :b, target_register: :c, instruction: 0x48 },
+      { source_register: :c, target_register: :c, instruction: 0x49 },
+      { source_register: :d, target_register: :c, instruction: 0x4A },
+      { source_register: :e, target_register: :c, instruction: 0x4B },
+      { source_register: :h, target_register: :c, instruction: 0x4C },
+      { source_register: :l, target_register: :c, instruction: 0x4D },
+      { source_register: :a, target_register: :c, instruction: 0x4F }
     ].each do |options|
       source_register = options[:source_register]
       target_register = options[:target_register]
       instruction = options[:instruction]
 
-      context "LOG #{target_register.to_s.upcase},#{source_register.to_s.upcase}" do
+      context "LD #{target_register.to_s.upcase},#{source_register.to_s.upcase}" do
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
-          state.send(target_register).write_value(0x11)
+          state.send(source_register).write_value(0x11)
 
           subject.tick
 
