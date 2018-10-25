@@ -624,7 +624,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
-        it 'should  not jump to offset' do
+        it 'should not jump to offset' do
           mmu[0x00] = 0x20
           mmu[0x01] = 0b000_0010
 
@@ -665,7 +665,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
-        it 'should  not jump to offset' do
+        it 'should not jump to offset' do
           mmu[0x00] = 0x30
           mmu[0x01] = 0b000_0010
 
@@ -675,6 +675,27 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0b000_0010, f: 0b0001_0000)
         end
+      end
+    end
+
+    [
+      source_register: :b, target_register: :b, instruction: 0x40
+    ].each do |options|
+      source_register = options[:source_register]
+      target_register = options[:target_register]
+      instruction = options[:instruction]
+
+      context "LOG #{target_register.to_s.upcase},#{source_register.to_s.upcase}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+
+          state.send(target_register).write_value(0x11)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, :"#{source_register}" => 0x11, :"#{target_register}" => 0x11)
+        end
+
       end
     end
   end
