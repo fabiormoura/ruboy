@@ -595,5 +595,44 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0b000_0011)
       end
     end
+
+    context 'JR NZ,r8' do
+      context 'when zero flag is reset' do
+        it 'should jump to offset' do
+          mmu[0x00] = 0x20
+          mmu[0x01] = 0b000_0010
+
+          state.f.toggle_zero_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0100)
+        end
+
+        it 'should decrement when offset is negative' do
+          state.pc.write_value(0x02)
+
+          mmu[0x02] = 0x20
+          mmu[0x03] = 0b1111_1111
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0011)
+        end
+      end
+
+      context 'when zero flag is set' do
+        it 'should  not jump to offset' do
+          mmu[0x00] = 0x20
+          mmu[0x01] = 0b000_0010
+
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0010, f: 0b1000_0000)
+        end
+      end
+    end
   end
 end

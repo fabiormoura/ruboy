@@ -35,6 +35,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op2e.new,
           ::Emulator::Cpu::Instruction::Op3d.new,
           ::Emulator::Cpu::Instruction::Op3e.new,
+          ::Emulator::Cpu::Instruction::Op20.new,
           ::Emulator::Cpu::Instruction::Op21.new,
           ::Emulator::Cpu::Instruction::Op22.new,
           ::Emulator::Cpu::Instruction::Op23.new,

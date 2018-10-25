@@ -37,6 +37,11 @@ module Emulator
           bit_enabled?(CARRY_BIT)
         end
 
+        # @@return [TrueClass|FalseClass]
+        def zero_flag_enabled?
+          bit_enabled?(ZERO_BIT)
+        end
+
         # @param [TrueClass|FalseClass] enable
         # @param [Integer] bit
         def toggle_bit(enable, bit)
