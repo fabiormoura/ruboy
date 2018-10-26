@@ -809,7 +809,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
         subject.tick
 
-        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_1111)
+        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_1111, f: 0b0110_0000)
       end
     end
   end

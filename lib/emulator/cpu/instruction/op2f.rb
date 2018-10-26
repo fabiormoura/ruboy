@@ -12,6 +12,8 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           state.a.write_value(~state.a.read_value & 0xFF)
+          state.f.toggle_half_carry_flag(true)
+          state.f.toggle_subtract_flag(true)
         end
       end
     end
