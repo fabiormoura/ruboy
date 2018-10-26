@@ -33,6 +33,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op1c.new,
           ::Emulator::Cpu::Instruction::Op1d.new,
           ::Emulator::Cpu::Instruction::Op1e.new,
+          ::Emulator::Cpu::Instruction::Op1f.new,
           ::Emulator::Cpu::Instruction::Op2d.new,
           ::Emulator::Cpu::Instruction::Op2e.new,
           ::Emulator::Cpu::Instruction::Op3d.new,

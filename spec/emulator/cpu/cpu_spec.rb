@@ -594,6 +594,76 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'RRA' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x1F
+        state.f.toggle_carry_flag(true)
+        state.a.write_value(0b0110_0010)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b1011_0001, f: 0b0000_0000)
+      end
+
+      it 'should reset zero flag' do
+        mmu[0x00] = 0x1F
+        state.a.write_value(0)
+        state.f.toggle_zero_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0, f: 0b0000_0000)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x1F
+        state.a.write_value(0)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0, f: 0b0000_0000)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x1F
+        state.a.write_value(0)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0, f: 0b0000_0000)
+      end
+
+      it 'should reset half carry flag' do
+        mmu[0x00] = 0x1F
+        state.a.write_value(0)
+        state.f.toggle_half_carry_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0, f: 0b0000_0000)
+      end
+
+      it 'should carry flag be 1 when bit rotated is 1' do
+        mmu[0x00] = 0x1F
+        state.a.write_value(0b0000_0001)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b0000_0000, f: 0b0001_0000)
+      end
+
+      it 'should carry flag be 0 when bit rotated is 0' do
+        mmu[0x00] = 0x1F
+        state.a.write_value(0b0000_000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b0000_0000, f: 0b0000_0000)
+      end
+    end
+
     context 'JR r8' do
       it 'should increment when offset is positive' do
         mmu[0x00] = 0x18
