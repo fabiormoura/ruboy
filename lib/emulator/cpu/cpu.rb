@@ -40,6 +40,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op23.new,
           ::Emulator::Cpu::Instruction::Op2d.new,
           ::Emulator::Cpu::Instruction::Op2e.new,
+          ::Emulator::Cpu::Instruction::Op2f.new,
           ::Emulator::Cpu::Instruction::Op30.new,
           ::Emulator::Cpu::Instruction::Op31.new,
           ::Emulator::Cpu::Instruction::Op32.new,

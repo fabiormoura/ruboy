@@ -801,5 +801,16 @@ RSpec.describe Emulator::Cpu::Cpu do
 
       end
     end
+
+    context 'CPL' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x2F
+        state.a.write_value(0b1111_0000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_1111)
+      end
+    end
   end
 end
