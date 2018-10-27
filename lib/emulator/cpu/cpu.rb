@@ -81,7 +81,12 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op4c.new,
           ::Emulator::Cpu::Instruction::Op4d.new,
           ::Emulator::Cpu::Instruction::Op4e.new,
-          ::Emulator::Cpu::Instruction::Op4f.new
+          ::Emulator::Cpu::Instruction::Op4f.new,
+          ::Emulator::Cpu::Instruction::Op56.new,
+          ::Emulator::Cpu::Instruction::Op5e.new,
+          ::Emulator::Cpu::Instruction::Op66.new,
+          ::Emulator::Cpu::Instruction::Op6e.new,
+          ::Emulator::Cpu::Instruction::Op7e.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
