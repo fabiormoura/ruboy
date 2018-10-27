@@ -72,6 +72,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op43.new,
           ::Emulator::Cpu::Instruction::Op44.new,
           ::Emulator::Cpu::Instruction::Op45.new,
+          ::Emulator::Cpu::Instruction::Op46.new,
           ::Emulator::Cpu::Instruction::Op47.new,
           ::Emulator::Cpu::Instruction::Op48.new,
           ::Emulator::Cpu::Instruction::Op49.new,
@@ -79,6 +80,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op4b.new,
           ::Emulator::Cpu::Instruction::Op4c.new,
           ::Emulator::Cpu::Instruction::Op4d.new,
+          ::Emulator::Cpu::Instruction::Op4e.new,
           ::Emulator::Cpu::Instruction::Op4f.new
       ].freeze
 
