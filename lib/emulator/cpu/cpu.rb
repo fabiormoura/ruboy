@@ -65,6 +65,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op3c.new,
           ::Emulator::Cpu::Instruction::Op3d.new,
           ::Emulator::Cpu::Instruction::Op3e.new,
+          ::Emulator::Cpu::Instruction::Op3f.new,
           ::Emulator::Cpu::Instruction::Op40.new,
           ::Emulator::Cpu::Instruction::Op41.new,
           ::Emulator::Cpu::Instruction::Op42.new,

@@ -1155,5 +1155,29 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x01, f: 0b0001_0000)
       end
     end
+
+    context 'CCF' do
+      it 'should reset carry flag if set' do
+        mmu[0x00] = 0x3F
+        state.f.toggle_carry_flag(true)
+        state.f.toggle_half_carry_flag(true)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x01, f: 0b0000_0000)
+      end
+
+      it 'should set carry flag if reset' do
+        mmu[0x00] = 0x3F
+        state.f.toggle_carry_flag(false)
+        state.f.toggle_half_carry_flag(true)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x01, f: 0b0001_0000)
+      end
+    end
   end
 end
