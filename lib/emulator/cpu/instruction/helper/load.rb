@@ -25,6 +25,16 @@ module Emulator
             state.send(register).write_value(value)
           end
 
+          # @param [Integer] target_address
+          # @param [::Emulator::Cpu::State] state
+          # @param [::Emulator::Mmu] mmu
+          def load_target_address_from_pc_position_address(target_address:, state:, mmu:)
+            value = mmu[state.pc.read_value]
+            state.pc.increment
+
+            mmu[target_address] = value
+          end
+
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
           # @param [::Emulator::Mmu] mmu

@@ -372,6 +372,20 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context "LD (HL),d8" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x36
+        mmu[0x01] = 0xCC
+        mmu[0xAABB] = 0xDD
+
+        state.hl.write_value(0xAABB)
+
+        subject.tick
+        expect(state).to match_cpu_state(pc: 0x2, h: 0xAA, l: 0xBB)
+        expect(mmu[0xAABB]).to eq(0xCC)
+      end
+    end
+
     context 'RLCA' do
       it 'should execute instruction' do
         mmu[0x00] = 0x07
