@@ -16,9 +16,9 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-      { register: :bc, high_register: :b, low_register: :c, instruction: 0x01 },
-      { register: :de, high_register: :d, low_register: :e, instruction: 0x11 },
-      { register: :hl, high_register: :h, low_register: :l, instruction: 0x21 }
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0x01},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0x11},
+        {register: :hl, high_register: :h, low_register: :l, instruction: 0x21}
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -48,8 +48,8 @@ RSpec.describe Emulator::Cpu::Cpu do
 
 
     [
-      { register: :bc, high_register: :b, low_register: :c, instruction: 0x02 },
-      { register: :de, high_register: :d, low_register: :e, instruction: 0x12 }
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0x02},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0x12}
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -100,9 +100,9 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-      { register: :bc, high_register: :b, low_register: :c, instruction: 0x03 },
-      { register: :de, high_register: :d, low_register: :e, instruction: 0x13 },
-      { register: :hl, high_register: :h, low_register: :l, instruction: 0x23 },
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0x03},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0x13},
+        {register: :hl, high_register: :h, low_register: :l, instruction: 0x23},
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -135,10 +135,11 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-      { register: :b, instruction: 0x04 },
-      { register: :c, instruction: 0x0C },
-      { register: :d, instruction: 0x14 },
-      { register: :e, instruction: 0x1C }
+        {register: :b, instruction: 0x04},
+        {register: :c, instruction: 0x0C},
+        {register: :d, instruction: 0x14},
+        {register: :e, instruction: 0x1C},
+        {register: :h, instruction: 0x24}
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -189,13 +190,66 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context "INC (HL)" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x34
+        mmu[0x1122] = 0xBB
+
+        state.hl.write_value(0x1122)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x11, l: 0x22)
+        expect(mmu[0x1122]).to eq(0xBC)
+      end
+
+      it 'should disable zero flag if result is not zero' do
+        mmu[0x00] = 0x34
+        mmu[0x1122] = 0b0000_0000
+
+        state.hl.write_value(0x1122)
+        state.f.toggle_zero_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x11, l: 0x22, f: 0b0000_0000)
+        expect(mmu[0x1122]).to eq(0b0000_0001)
+      end
+
+      it 'should disable subtract flag' do
+        mmu[0x00] = 0x34
+        mmu[0x1122] = 0b0000_0000
+
+        state.hl.write_value(0x1122)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x11, l: 0x22, f: 0b0000_0000)
+        expect(mmu[0x1122]).to eq(0b0000_0001)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x34
+        mmu[0x1122] = 0b0000_1111
+
+        state.hl.write_value(0x1122)
+        state.f.toggle_half_carry_flag(false)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x11, l: 0x22, f: 0b0010_0000)
+        expect(mmu[0x1122]).to eq(0b0001_0000)
+      end
+    end
+
     [
-      { register: :b, instruction: 0x05 },
-      { register: :c, instruction: 0x0D },
-      { register: :d, instruction: 0x15 },
-      { register: :e, instruction: 0x1D },
-      { register: :l, instruction: 0x2D },
-      { register: :a, instruction: 0x3D }
+        {register: :b, instruction: 0x05},
+        {register: :c, instruction: 0x0D},
+        {register: :d, instruction: 0x15},
+        {register: :e, instruction: 0x1D},
+        {register: :l, instruction: 0x2D},
+        {register: :a, instruction: 0x3D}
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -245,12 +299,12 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-      { register: :b, instruction: 0x06 },
-      { register: :c, instruction: 0x0E },
-      { register: :d, instruction: 0x16 },
-      { register: :e, instruction: 0x1E },
-      { register: :l, instruction: 0x2E },
-      { register: :a, instruction: 0x3E }
+        {register: :b, instruction: 0x06},
+        {register: :c, instruction: 0x0E},
+        {register: :d, instruction: 0x16},
+        {register: :e, instruction: 0x1E},
+        {register: :l, instruction: 0x2E},
+        {register: :a, instruction: 0x3E}
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -352,8 +406,8 @@ RSpec.describe Emulator::Cpu::Cpu do
 
 
     [
-      { primary_register: :hl, secondary_register: :bc, primary_high_register: :h, primary_low_register: :l, secondary_high_register: :b, secondary_low_register: :c, instruction: 0x09 },
-      { primary_register: :hl, secondary_register: :de, primary_high_register: :h, primary_low_register: :l, secondary_high_register: :d, secondary_low_register: :e, instruction: 0x19 },
+        {primary_register: :hl, secondary_register: :bc, primary_high_register: :h, primary_low_register: :l, secondary_high_register: :b, secondary_low_register: :c, instruction: 0x09},
+        {primary_register: :hl, secondary_register: :de, primary_high_register: :h, primary_low_register: :l, secondary_high_register: :d, secondary_low_register: :e, instruction: 0x19},
     ].each do |options|
       primary_register = options[:primary_register]
       secondary_register = options[:secondary_register]
@@ -410,8 +464,8 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        { register: :bc, high_register: :b, low_register: :c, instruction: 0x0A },
-        { register: :de, high_register: :d, low_register: :e, instruction: 0x1A },
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0x0A},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0x1A},
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -434,8 +488,8 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-        { register: :bc, high_register: :b, low_register: :c, instruction: 0x0B },
-        { register: :de, high_register: :d, low_register: :e, instruction: 0x1B },
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0x0B},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0x1B},
     ].each do |options|
       register = options[:register]
       high_register = options[:high_register]
@@ -769,20 +823,20 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     [
-      { source_register: :b, target_register: :b, instruction: 0x40 },
-      { source_register: :c, target_register: :b, instruction: 0x41 },
-      { source_register: :d, target_register: :b, instruction: 0x42 },
-      { source_register: :e, target_register: :b, instruction: 0x43 },
-      { source_register: :h, target_register: :b, instruction: 0x44 },
-      { source_register: :l, target_register: :b, instruction: 0x45 },
-      { source_register: :a, target_register: :b, instruction: 0x47 },
-      { source_register: :b, target_register: :c, instruction: 0x48 },
-      { source_register: :c, target_register: :c, instruction: 0x49 },
-      { source_register: :d, target_register: :c, instruction: 0x4A },
-      { source_register: :e, target_register: :c, instruction: 0x4B },
-      { source_register: :h, target_register: :c, instruction: 0x4C },
-      { source_register: :l, target_register: :c, instruction: 0x4D },
-      { source_register: :a, target_register: :c, instruction: 0x4F }
+        {source_register: :b, target_register: :b, instruction: 0x40},
+        {source_register: :c, target_register: :b, instruction: 0x41},
+        {source_register: :d, target_register: :b, instruction: 0x42},
+        {source_register: :e, target_register: :b, instruction: 0x43},
+        {source_register: :h, target_register: :b, instruction: 0x44},
+        {source_register: :l, target_register: :b, instruction: 0x45},
+        {source_register: :a, target_register: :b, instruction: 0x47},
+        {source_register: :b, target_register: :c, instruction: 0x48},
+        {source_register: :c, target_register: :c, instruction: 0x49},
+        {source_register: :d, target_register: :c, instruction: 0x4A},
+        {source_register: :e, target_register: :c, instruction: 0x4B},
+        {source_register: :h, target_register: :c, instruction: 0x4C},
+        {source_register: :l, target_register: :c, instruction: 0x4D},
+        {source_register: :a, target_register: :c, instruction: 0x4F}
     ].each do |options|
       source_register = options[:source_register]
       target_register = options[:target_register]
