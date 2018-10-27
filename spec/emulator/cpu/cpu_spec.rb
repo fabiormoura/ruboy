@@ -1192,6 +1192,58 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    [
+        {register: :b, instruction: 0x70},
+        {register: :c, instruction: 0x71},
+        {register: :d, instruction: 0x72},
+        {register: :e, instruction: 0x73},
+        {register: :a, instruction: 0x77}
+
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
+
+      context "LD (HL),#{register.to_s.upcase}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+
+          state.send(register).write_value(0xEF)
+          state.hl.write_value(0xAA11)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, h: 0xAA, l: 0x11, :"#{register}" => 0xEF)
+          expect(mmu[0xAA11]).to eq(0xEF)
+        end
+      end
+    end
+
+    context 'LD (HL),H' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x74
+
+        state.hl.write_value(0xAA11)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x01, h: 0xAA, l: 0x11)
+        expect(mmu[0xAA11]).to eq(0xAA)
+      end
+    end
+
+    context 'LD (HL),H' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x75
+
+        state.hl.write_value(0xAA11)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x01, h: 0xAA, l: 0x11)
+        expect(mmu[0xAA11]).to eq(0x11)
+      end
+    end
+
     context 'CPL' do
       it 'should execute instruction' do
         mmu[0x00] = 0x2F
