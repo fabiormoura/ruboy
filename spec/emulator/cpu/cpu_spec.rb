@@ -1112,7 +1112,42 @@ RSpec.describe Emulator::Cpu::Cpu do
         {source_register: :e, target_register: :c, instruction: 0x4B},
         {source_register: :h, target_register: :c, instruction: 0x4C},
         {source_register: :l, target_register: :c, instruction: 0x4D},
-        {source_register: :a, target_register: :c, instruction: 0x4F}
+        {source_register: :a, target_register: :c, instruction: 0x4F},
+        {source_register: :b, target_register: :d, instruction: 0x50},
+        {source_register: :c, target_register: :d, instruction: 0x51},
+        {source_register: :d, target_register: :d, instruction: 0x52},
+        {source_register: :e, target_register: :d, instruction: 0x53},
+        {source_register: :h, target_register: :d, instruction: 0x54},
+        {source_register: :l, target_register: :d, instruction: 0x55},
+        {source_register: :a, target_register: :d, instruction: 0x57},
+        {source_register: :b, target_register: :e, instruction: 0x58},
+        {source_register: :c, target_register: :e, instruction: 0x59},
+        {source_register: :d, target_register: :e, instruction: 0x5A},
+        {source_register: :e, target_register: :e, instruction: 0x5B},
+        {source_register: :h, target_register: :e, instruction: 0x5C},
+        {source_register: :l, target_register: :e, instruction: 0x5D},
+        {source_register: :a, target_register: :e, instruction: 0x5F},
+        {source_register: :b, target_register: :h, instruction: 0x60},
+        {source_register: :c, target_register: :h, instruction: 0x61},
+        {source_register: :d, target_register: :h, instruction: 0x62},
+        {source_register: :e, target_register: :h, instruction: 0x63},
+        {source_register: :h, target_register: :h, instruction: 0x64},
+        {source_register: :l, target_register: :h, instruction: 0x65},
+        {source_register: :a, target_register: :h, instruction: 0x67},
+        {source_register: :b, target_register: :l, instruction: 0x68},
+        {source_register: :c, target_register: :l, instruction: 0x69},
+        {source_register: :d, target_register: :l, instruction: 0x6A},
+        {source_register: :e, target_register: :l, instruction: 0x6B},
+        {source_register: :h, target_register: :l, instruction: 0x6C},
+        {source_register: :l, target_register: :l, instruction: 0x6D},
+        {source_register: :a, target_register: :l, instruction: 0x6F},
+        {source_register: :b, target_register: :a, instruction: 0x78},
+        {source_register: :c, target_register: :a, instruction: 0x79},
+        {source_register: :d, target_register: :a, instruction: 0x7A},
+        {source_register: :e, target_register: :a, instruction: 0x7B},
+        {source_register: :h, target_register: :a, instruction: 0x7C},
+        {source_register: :l, target_register: :a, instruction: 0x7D},
+        {source_register: :a, target_register: :a, instruction: 0x7F}
     ].each do |options|
       source_register = options[:source_register]
       target_register = options[:target_register]
@@ -1128,7 +1163,6 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0x01, :"#{source_register}" => 0x11, :"#{target_register}" => 0x11)
         end
-
       end
     end
 
