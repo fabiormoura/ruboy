@@ -484,7 +484,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       secondary_low_register = options[:secondary_low_register]
       instruction = options[:instruction]
 
-      context "ADD #{primary_low_register.to_s.upcase},#{secondary_low_register.to_s.upcase}" do
+      context "ADD #{primary_register.to_s.upcase},#{secondary_register.to_s.upcase}" do
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -527,6 +527,94 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0x1, :"#{secondary_high_register}" => 0xFF, :"#{secondary_low_register}" => 0xFF, :"#{primary_high_register}" => 0xFF, :"#{primary_low_register}" => 0xFE, f: 0b0011_0000)
         end
+      end
+    end
+
+    context "ADD HL,HL" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x29
+
+        state.hl.write_value 0x0102
+
+        subject.tick
+
+        0x0204
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x02, l: 0x04)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x29
+
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, f: 0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x29
+
+        state.hl.write_value 0x0FFF
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x1F, l: 0xFE, f: 0b0010_0000)
+      end
+
+      it 'should set carry flag' do
+        mmu[0x00] = 0x29
+
+        state.hl.write_value 0xFFFF
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xFF, l: 0xFE, f: 0b0011_0000)
+      end
+    end
+
+    context "ADD HL,SP" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x39
+
+        state.hl.write_value 0x0102
+        state.sp.write_value 0x0304
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, sp: 0x0304, h: 0x04, l: 0x06)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x39
+
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, f: 0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x39
+
+        state.hl.write_value 0x0FFF
+        state.sp.write_value 0x0FFF
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, sp: 0x0FFF, h: 0x1F, l: 0xFE, f: 0b0010_0000)
+      end
+
+      it 'should set carry flag' do
+        mmu[0x00] = 0x39
+
+        state.hl.write_value 0xFFFF
+        state.sp.write_value 0xFFFF
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, sp: 0xFFFF, h: 0xFF, l: 0xFE, f: 0b0011_0000)
       end
     end
 
