@@ -249,7 +249,8 @@ RSpec.describe Emulator::Cpu::Cpu do
         {register: :d, instruction: 0x15},
         {register: :e, instruction: 0x1D},
         {register: :l, instruction: 0x2D},
-        {register: :a, instruction: 0x3D}
+        {register: :a, instruction: 0x3D},
+        {register: :h, instruction: 0x25}
     ].each do |options|
       register = options[:register]
       instruction = options[:instruction]
@@ -295,6 +296,57 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_1111, f: 0b0110_0000)
         end
+      end
+    end
+
+    context "DEC (HL)" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0x35
+        mmu[0xAABB] = 0b0000_1000
+
+        state.hl.write_value(0xAABB)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xAA, l: 0xBB, f: 0b0100_0000)
+        expect(mmu[0xAABB]).to eq(0b0000_0111)
+      end
+
+      it 'should disable zero flag if result is not zero' do
+        mmu[0x00] = 0x35
+        mmu[0xAABB] = 0b0000_0010
+
+        state.hl.write_value(0xAABB)
+        state.f.toggle_zero_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xAA, l: 0xBB, f: 0b0100_0000)
+        expect(mmu[0xAABB]).to eq(0b0000_0001)
+      end
+
+      it 'should enable zero flag if result is zero' do
+        mmu[0x00] = 0x35
+        mmu[0xAABB] = 0b0000_0001
+
+        state.hl.write_value(0xAABB)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xAA, l: 0xBB, f: 0b1100_0000)
+        expect(mmu[0xAABB]).to eq(0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x35
+        mmu[0xAABB] = 0b0001_0000
+
+        state.hl.write_value(0xAABB)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0xAA, l: 0xBB, f: 0b0110_0000)
+        expect(mmu[0xAABB]).to eq(0b0000_1111)
       end
     end
 
