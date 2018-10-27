@@ -1291,5 +1291,42 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x01, f: 0b0001_0000)
       end
     end
+
+    [
+        {register: :b, instruction: 0xA8},
+        {register: :c, instruction: 0xA9},
+        {register: :d, instruction: 0xAA},
+        {register: :e, instruction: 0xAB},
+        {register: :h, instruction: 0xAC},
+        {register: :l, instruction: 0xAD},
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
+
+      context "XOR #{register}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0100_1000)
+          state.send(register).write_value(0b1011_0011)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, a: 0b1111_1011, :"#{register}" => 0b1011_0011)
+        end
+      end
+    end
+
+    context 'XOR A' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0xAF
+
+        state.a.write_value(0b0101_0101)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_0000)
+      end
+    end
   end
 end

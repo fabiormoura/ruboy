@@ -131,6 +131,13 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op7d.new,
           ::Emulator::Cpu::Instruction::Op7e.new,
           ::Emulator::Cpu::Instruction::Op7f.new,
+          ::Emulator::Cpu::Instruction::Opa8.new,
+          ::Emulator::Cpu::Instruction::Opa9.new,
+          ::Emulator::Cpu::Instruction::Opaa.new,
+          ::Emulator::Cpu::Instruction::Opab.new,
+          ::Emulator::Cpu::Instruction::Opac.new,
+          ::Emulator::Cpu::Instruction::Opad.new,
+          ::Emulator::Cpu::Instruction::Opaf.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
