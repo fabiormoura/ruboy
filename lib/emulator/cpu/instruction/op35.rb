@@ -5,7 +5,7 @@ module Emulator
         include ::Emulator::Cpu::Instruction::Helper::Arithmetic
 
         def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x35), cycles: 4, label: 'DEC (HL)')
+          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x35), cycles: 12, label: 'DEC (HL)')
         end
 
         # @param [::Emulator::Cpu::State] state
