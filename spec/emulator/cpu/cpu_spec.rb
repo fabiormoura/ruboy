@@ -848,6 +848,47 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'JR Z,r8' do
+      context 'when zero flag is set' do
+        it 'should jump to offset' do
+          mmu[0x00] = 0x28
+          mmu[0x01] = 0b000_0010
+
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0100, f: 0b1000_0000)
+        end
+
+        it 'should decrement when offset is negative' do
+          state.pc.write_value(0x02)
+
+          mmu[0x02] = 0x28
+          mmu[0x03] = 0b1111_1111
+
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0011, f: 0b1000_0000)
+        end
+      end
+
+      context 'when zero flag is reset' do
+        it 'should not jump to offset' do
+          mmu[0x00] = 0x28
+          mmu[0x01] = 0b000_0010
+
+          state.f.toggle_zero_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0010)
+        end
+      end
+    end
+
     context 'JR NC,r8' do
       context 'when zero flag is reset' do
         it 'should jump to offset' do
@@ -885,6 +926,47 @@ RSpec.describe Emulator::Cpu::Cpu do
           subject.tick
 
           expect(state).to match_cpu_state(pc: 0b000_0010, f: 0b0001_0000)
+        end
+      end
+    end
+
+    context 'JR C,r8' do
+      context 'when zero flag is set' do
+        it 'should jump to offset' do
+          mmu[0x00] = 0x38
+          mmu[0x01] = 0b000_0010
+
+          state.f.toggle_carry_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0100, f: 0b0001_0000)
+        end
+
+        it 'should decrement when offset is negative' do
+          state.pc.write_value(0x02)
+
+          mmu[0x02] = 0x38
+          mmu[0x03] = 0b1111_1111
+
+          state.f.toggle_carry_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0011, f: 0b0001_0000)
+        end
+      end
+
+      context 'when zero flag is reset' do
+        it 'should not jump to offset' do
+          mmu[0x00] = 0x38
+          mmu[0x01] = 0b000_0010
+
+          state.f.toggle_carry_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0b000_0010)
         end
       end
     end
