@@ -181,7 +181,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0000_000)
         end
 
-        it 'should disable zero flag if result is not zero' do
+        it 'should disable zero flag when result is not zero' do
           mmu[0x00] = instruction
 
           state.send(register).write_value(0b0000_0000)
@@ -229,7 +229,7 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(mmu[0x1122]).to eq(0xBC)
       end
 
-      it 'should disable zero flag if result is not zero' do
+      it 'should disable zero flag when result is not zero' do
         mmu[0x00] = 0x34
         mmu[0x1122] = 0b0000_0000
 
@@ -292,7 +292,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0111, f: 0b0100_0000)
         end
 
-        it 'should disable zero flag if result is not zero' do
+        it 'should disable zero flag when result is not zero' do
           mmu[0x00] = instruction
 
           state.send(register).write_value(0b0000_0010)
@@ -303,7 +303,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0100_0000)
         end
 
-        it 'should enable zero flag if result is zero' do
+        it 'should enable zero flag when result is zero' do
           mmu[0x00] = instruction
 
           state.send(register).write_value(0b0000_0001)
@@ -338,7 +338,7 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(mmu[0xAABB]).to eq(0b0000_0111)
       end
 
-      it 'should disable zero flag if result is not zero' do
+      it 'should disable zero flag when result is not zero' do
         mmu[0x00] = 0x35
         mmu[0xAABB] = 0b0000_0010
 
@@ -351,7 +351,7 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(mmu[0xAABB]).to eq(0b0000_0001)
       end
 
-      it 'should enable zero flag if result is zero' do
+      it 'should enable zero flag when result is zero' do
         mmu[0x00] = 0x35
         mmu[0xAABB] = 0b0000_0001
 
@@ -1314,6 +1314,66 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0x01, a: 0b1111_1011, :"#{register}" => 0b1011_0011)
         end
+
+        it 'should reset subtract flag' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0100_1000)
+          state.send(register).write_value(0b1011_0011)
+          state.f.toggle_subtract_flag(true)
+
+          subject.tick
+
+          expect(state.f.read_value).to eq(0x0)
+        end
+
+        it 'should reset half carry flag' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0100_1000)
+          state.send(register).write_value(0b1011_0011)
+          state.f.toggle_half_carry_flag(true)
+
+          subject.tick
+
+          expect(state.f.read_value).to eq(0x0)
+        end
+
+        it 'should reset carry flag' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0100_1000)
+          state.send(register).write_value(0b1011_0011)
+          state.f.toggle_half_carry_flag(true)
+
+          subject.tick
+
+          expect(state.f.read_value).to eq(0x0)
+        end
+
+        it 'should reset zero flag when result is not zero' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0100_1000)
+          state.send(register).write_value(0b1011_0011)
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state.f.read_value).to eq(0x0)
+        end
+
+        it 'should set zero flag when result is zero' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0101_0101)
+          state.send(register).write_value(0b0101_0101)
+          state.f.toggle_zero_flag(false)
+
+          subject.tick
+
+          expect(state.f.read_value).to eq(0b1000_0000)
+        end
       end
     end
 
@@ -1325,7 +1385,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
         subject.tick
 
-        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_0000)
+        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_0000, f: 0b1000_0000)
       end
     end
   end

@@ -53,6 +53,15 @@ module Emulator
             state.f.toggle_half_carry_flag((primary_value & 0xFFF) + (secondary_value & 0xFFF) > 0xFFF)
             state.f.toggle_carry_flag(value >> 16 > 0)
           end
+
+          # @param [Symbol] register
+          # @param [Integer] value
+          # @param [::Emulator::Cpu::State] state
+          def xor_byte_register(register:, value:, state:)
+            updated_value = state.send(register).read_value ^ value
+            state.send(register).write_value(updated_value)
+            ::Emulator::Cpu::Instruction::Helper::Flags::Xor.update_register_flags(state: state, value: updated_value)
+          end
         end
       end
     end
