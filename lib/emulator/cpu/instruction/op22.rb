@@ -11,7 +11,7 @@ module Emulator
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
-          load_word_register_address_from_a_register(register: :hl, state: state, mmu: mmu)
+          load_word_register_address_from_byte_register(address_register: :hl, register: :a, state: state, mmu: mmu)
           state.hl.write_value(state.hl.read_value + 0x01)
         end
       end
