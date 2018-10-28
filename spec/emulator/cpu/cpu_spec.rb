@@ -1388,5 +1388,45 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_0000, f: 0b1000_0000)
       end
     end
+
+    [
+        {bit: 7, register: :h, instruction: 0x7C}
+    ].each do |options|
+      bit = options[:bit]
+      register = options[:register]
+      instruction = options[:instruction]
+
+      context "BIT #{bit},#{register.to_s.upcase}" do
+        it 'should set zero flag when bit is 0' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+
+          value = 0b1111_1111 ^ (1 << bit)
+          state.send(register).write_value(value)
+          state.f.toggle_zero_flag(false)
+          state.f.toggle_subtract_flag(true)
+          state.f.toggle_half_carry_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x02, :"#{register}" => value, f: 0b1010_0000)
+        end
+
+        it 'should reset zero flag when bit is not 0' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+
+          value = 0b1111_1111
+          state.send(register).write_value(value)
+          state.f.toggle_zero_flag(true)
+          state.f.toggle_subtract_flag(true)
+          state.f.toggle_half_carry_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x02, :"#{register}" => value, f: 0b0010_0000)
+        end
+      end
+    end
   end
 end

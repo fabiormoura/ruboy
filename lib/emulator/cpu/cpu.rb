@@ -137,7 +137,8 @@ module Emulator
           ::Emulator::Cpu::Instruction::Opab.new,
           ::Emulator::Cpu::Instruction::Opac.new,
           ::Emulator::Cpu::Instruction::Opad.new,
-          ::Emulator::Cpu::Instruction::Opaf.new
+          ::Emulator::Cpu::Instruction::Opaf.new,
+          ::Emulator::Cpu::Instruction::Opcb7c.new
       ].freeze
 
       # @param [Emulator::Mmu] mmu
@@ -149,14 +150,25 @@ module Emulator
       end
 
       def tick
-        opcode = @mmu[@state.pc.read_value]
-        # puts @state
+        opcode = fetch_opcode
         # puts "0x#{opcode.to_s(16).rjust(1, '0')}"
+        # puts @state
         instruction = @instructions[::Emulator::Cpu::Instruction::InstructionId.new(opcode)]
-        @state.pc.increment
         raise NotImplementedError if instruction.nil?
         instruction.execute(mmu: @mmu, state: @state)
       end
+
+      def fetch_opcode
+        opcode = @mmu[@state.pc.read_value]
+        @state.pc.increment
+        return opcode unless opcode == 0xCB
+
+        opcode = opcode << 8 | @mmu[@state.pc.read_value]
+        @state.pc.increment
+        opcode
+      end
+
+      private :fetch_opcode
     end
   end
 end
