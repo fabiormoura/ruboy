@@ -39,7 +39,16 @@ module Emulator
           # @param [::Emulator::Cpu::State] state
           # @param [::Emulator::Mmu] mmu
           def load_word_register_address_from_a_register(register:, state:, mmu:)
-            mmu[state.send(register).read_value] = state.a.read_value
+            address = state.send(register).read_value
+            load_address_from_byte_register(address: address, register: :a, state: state, mmu: mmu)
+          end
+
+          # @param [Integer] address
+          # @param [Symbol] register
+          # @param [::Emulator::Cpu::State] state
+          # @param [::Emulator::Mmu] mmu
+          def load_address_from_byte_register(address:, register:, state:, mmu:)
+            mmu[address] = state.send(register).read_value
           end
 
           # @param [Integer] address

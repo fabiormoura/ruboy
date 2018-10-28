@@ -1428,5 +1428,19 @@ RSpec.describe Emulator::Cpu::Cpu do
         end
       end
     end
+
+    context "LD (C),A" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0xE2
+
+        state.c.write_value(0xDD)
+        state.a.write_value(0xCD)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x2, a: 0xCD, c: 0xDD)
+        expect(mmu[0xFFDD]).to eq(0xCD)
+      end
+    end
   end
 end
