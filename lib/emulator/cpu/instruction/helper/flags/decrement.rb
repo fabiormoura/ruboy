@@ -14,7 +14,6 @@ module Emulator
                 state.f.toggle_subtract_flag(true)
               end
             end
-
           end
         end
       end

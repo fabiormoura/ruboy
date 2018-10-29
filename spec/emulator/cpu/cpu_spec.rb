@@ -1860,18 +1860,18 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'RET' do
-        it 'should execute instruction' do
-          mmu[0x00] = 0xC9
+      it 'should execute instruction' do
+        mmu[0x00] = 0xC9
 
-          mmu[0xFFFC] = 0xDD
-          mmu[0xFFFD] = 0xEE
+        mmu[0xFFFC] = 0xDD
+        mmu[0xFFFD] = 0xEE
 
-          state.sp.write_value(0xFFFC)
+        state.sp.write_value(0xFFFC)
 
-          subject.tick
+        subject.tick
 
-          expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE)
-        end
+        expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE)
+      end
     end
 
     [
@@ -1896,6 +1896,52 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0x01, sp: 0xFFFE, :"#{high_register}" => 0xEE, :"#{low_register}" => 0xDD)
         end
+      end
+    end
+
+    context 'CP d8' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0xFE
+        mmu[0x01] = 0x0A
+
+        state.a.write_value(0x0B)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x02, a: 0x0B, f: 0b0100_0000)
+      end
+
+      it 'should set zero flag when result is zero' do
+        mmu[0x00] = 0xFE
+        mmu[0x01] = 0x0B
+
+        state.a.write_value(0x0B)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x02, a: 0x0B, f: 0b1100_0000)
+      end
+
+      it 'should set carry flag when borrowing' do
+        mmu[0x00] = 0xFE
+        mmu[0x01] = 0b0010_0000
+
+        state.a.write_value(0b0000_1000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x02, a: 0b0000_1000, f: 0b0101_0000)
+      end
+
+      it 'should set half carry flag when borrowing from bit 4' do
+        mmu[0x00] = 0xFE
+        mmu[0x01] = 0b0000_0100
+
+        state.a.write_value(0b0001_0000)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x02, a: 0b0001_0000, f: 0b0110_0000)
       end
     end
   end
