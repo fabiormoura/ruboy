@@ -148,13 +148,16 @@ module Emulator
           ::Emulator::Cpu::Instruction::Opcc.new,
           ::Emulator::Cpu::Instruction::Opcd.new,
           ::Emulator::Cpu::Instruction::Opd0.new,
+          ::Emulator::Cpu::Instruction::Opd1.new,
           ::Emulator::Cpu::Instruction::Opd4.new,
           ::Emulator::Cpu::Instruction::Opd5.new,
           ::Emulator::Cpu::Instruction::Opd8.new,
           ::Emulator::Cpu::Instruction::Opdc.new,
           ::Emulator::Cpu::Instruction::Ope0.new,
+          ::Emulator::Cpu::Instruction::Ope1.new,
           ::Emulator::Cpu::Instruction::Ope5.new,
           ::Emulator::Cpu::Instruction::Ope2.new,
+          ::Emulator::Cpu::Instruction::Opf1.new,
           ::Emulator::Cpu::Instruction::Opf5.new
       ].freeze
 
