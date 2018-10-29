@@ -33,10 +33,6 @@ module Emulator
             state.send(register).write_value(value)
           end
 
-          def signed_byte_value(value)
-            value > 0b0111_1111 ? (value & 0b0111_1111) - 0b1000_0000 : value
-          end
-
           # @param [Symbol] primary_register
           # @param [Symbol] secondary_register
           # @param [::Emulator::Cpu::State] state

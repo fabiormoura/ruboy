@@ -1,17 +1,17 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op30 < ::Emulator::Cpu::Instruction::Instruction
+      class Opcc < ::Emulator::Cpu::Instruction::Instruction
         include ::Emulator::Cpu::Instruction::Helper::Jump
 
         def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x30), cycles: 12, label: 'JR NC,r8')
+          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0xcc), cycles: 24, label: 'CALL Z,a16')
         end
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
-          jump_to_signed_byte_offset(state: state, mmu: mmu) {!state.f.carry_flag_enabled?}
+          call_address(state: state, mmu: mmu) {state.f.zero_flag_enabled?}
         end
       end
     end
