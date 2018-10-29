@@ -1493,6 +1493,42 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'CALL C,a16' do
+      context 'when zero flag is set' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xDC
+          mmu[0x01] = 0xBB
+          mmu[0x02] = 0xAA
+
+          state.sp.write_value(0xFFFE)
+          state.f.toggle_carry_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0xAABB, sp: 0xFFFC, f: 0b0001_0000)
+          expect(mmu[0xFFFD]).to eq(0x00)
+          expect(mmu[0xFFFC]).to eq(0x03)
+        end
+      end
+
+      context 'when zero flag is reset' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xDC
+          mmu[0x01] = 0xBB
+          mmu[0x02] = 0xAA
+
+          state.sp.write_value(0xFFFE)
+          state.f.toggle_carry_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x03, sp: 0xFFFE)
+          expect(mmu[0xFFFD]).to be_nil
+          expect(mmu[0xFFFC]).to be_nil
+        end
+      end
+    end
+
     context 'CALL a16' do
       it 'should execute instruction' do
         mmu[0x00] = 0xCD

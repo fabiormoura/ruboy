@@ -141,6 +141,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Opcb7c.new,
           ::Emulator::Cpu::Instruction::Opcc.new,
           ::Emulator::Cpu::Instruction::Opcd.new,
+          ::Emulator::Cpu::Instruction::Opdc.new,
           ::Emulator::Cpu::Instruction::Ope0.new,
           ::Emulator::Cpu::Instruction::Ope2.new
       ].freeze
