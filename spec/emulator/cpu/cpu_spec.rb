@@ -146,7 +146,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
-    context "INC SP" do
+    context 'INC SP' do
       it 'should execute instruction' do
         mmu[0x00] = 0x33
 
@@ -1735,6 +1735,38 @@ RSpec.describe Emulator::Cpu::Cpu do
           subject.tick
 
           expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_0100, f: 0b0000_0000)
+        end
+      end
+    end
+
+    context 'RET NZ' do
+      context 'when zero flag is reset' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xC0
+
+          mmu[0xFFFC] = 0xDD
+          mmu[0xFFFD] = 0xEE
+
+
+          state.sp.write_value(0xFFFC)
+
+          state.f.toggle_zero_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE)
+        end
+      end
+
+      context 'when zero flag is set' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xC0
+
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1, f: 0b1000_0000)
         end
       end
     end
