@@ -3,6 +3,8 @@ module Emulator
     module Instruction
       module Helper
         module Arithmetic
+          extend ActiveSupport::Concern
+
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
           def increment_byte_register(register:, state:)
@@ -13,6 +15,8 @@ module Emulator
             updated_value = state.send(register).read_value
             ::Emulator::Cpu::Instruction::Helper::Flags::Increment.update_register_flags(state: state, value: value, updated_value: updated_value)
           end
+
+          protected :increment_byte_register
 
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
@@ -26,12 +30,16 @@ module Emulator
             ::Emulator::Cpu::Instruction::Helper::Flags::Decrement.update_register_flags(state: state, value: value, updated_value: updated_value)
           end
 
+          protected :decrement_byte_register
+
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
           def increment_word_register(register:, state:)
             value = state.send(register).read_value + 1
             state.send(register).write_value(value)
           end
+
+          protected :increment_word_register
 
           # @param [Symbol] primary_register
           # @param [Symbol] secondary_register
@@ -50,6 +58,8 @@ module Emulator
             state.f.toggle_carry_flag(value >> 16 > 0)
           end
 
+          protected :add_word_registers
+
           # @param [Symbol] register
           # @param [Integer] value
           # @param [::Emulator::Cpu::State] state
@@ -58,6 +68,8 @@ module Emulator
             state.send(register).write_value(updated_value)
             ::Emulator::Cpu::Instruction::Helper::Flags::Xor.update_register_flags(state: state, value: updated_value)
           end
+
+          protected :xor_byte_register
         end
       end
     end

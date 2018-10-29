@@ -3,6 +3,8 @@ module Emulator
     module Instruction
       module Helper
         module Rotate
+          extend ActiveSupport::Concern
+
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
           def rotate_left_byte_register(register:, state:)
@@ -16,11 +18,13 @@ module Emulator
             state.f.toggle_carry_flag(bit != 0)
           end
 
+          protected :rotate_left_byte_register
+
           def rotate_left_byte_register_using_carry_flag(register:, state:)
             value = state.send(register).read_value
             register_bit = (value >> 7) & 0x01
 
-            carry_bit = state.f.carry_flag_enabled? ? 0x1: 0x0
+            carry_bit = state.f.carry_flag_enabled? ? 0x1 : 0x0
 
             state.send(register).write_value(value << 1 & 0xFF | carry_bit)
             state.f.toggle_zero_flag(false)
@@ -29,11 +33,13 @@ module Emulator
             state.f.toggle_carry_flag(register_bit != 0)
           end
 
+          protected :rotate_left_byte_register_using_carry_flag
+
           def rotate_right_byte_register_using_carry_flag(register:, state:)
             value = state.send(register).read_value
             register_bit = value & 0x01
 
-            carry_bit = state.f.carry_flag_enabled? ? 0x1: 0x0
+            carry_bit = state.f.carry_flag_enabled? ? 0x1 : 0x0
 
             state.send(register).write_value(value >> 1 & 0xFF | (carry_bit << 7))
             state.f.toggle_zero_flag(false)
@@ -41,6 +47,8 @@ module Emulator
             state.f.toggle_half_carry_flag(false)
             state.f.toggle_carry_flag(register_bit != 0)
           end
+
+          protected :rotate_right_byte_register_using_carry_flag
 
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
@@ -54,6 +62,8 @@ module Emulator
             state.f.toggle_half_carry_flag(false)
             state.f.toggle_carry_flag(bit != 0)
           end
+
+          protected :rotate_right_byte_register
         end
       end
     end

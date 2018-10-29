@@ -3,6 +3,9 @@ module Emulator
     module Instruction
       module Helper
         module Jump
+          extend ActiveSupport::Concern
+          include Stack
+
           # @param [::Emulator::Cpu::State] state
           # @param [::Emulator::Mmu] mmu
           def jump_to_signed_byte_offset(state:, mmu:)
@@ -12,6 +15,8 @@ module Emulator
             state.pc.write_value(addr)
           end
 
+          protected :jump_to_signed_byte_offset
+
           # @param [::Emulator::Cpu::State] state
           # @param [::Emulator::Mmu] mmu
           def call_address(state:, mmu:)
@@ -20,15 +25,13 @@ module Emulator
             state.pc.increment(offset: 2)
 
             if !block_given? || yield
-              state.sp.write_value(state.sp.read_value - 1)
-              mmu[state.sp.read_value] = (state.pc.read_value >> 8) & 0xFF
-
-              state.sp.write_value(state.sp.read_value - 1)
-              mmu[state.sp.read_value] = (state.pc.read_value & 0xFF)
+              push_word_value_onto_stack(state: state, mmu: mmu, value: state.pc.read_value)
 
               state.pc.write_value(jump_address)
             end
           end
+
+          protected :call_address
 
           def signed_byte_value(value)
             value > 0b0111_1111 ? (value & 0b0111_1111) - 0b1000_0000 : value

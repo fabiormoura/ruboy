@@ -3,6 +3,8 @@ module Emulator
     module Instruction
       module Helper
         module Bit
+          extend ActiveSupport::Concern
+
           # @param [Integer] bit
           # @param [Symbol] register
           # @param [::Emulator::Cpu::State] state
@@ -11,6 +13,8 @@ module Emulator
             state.f.toggle_subtract_flag(false)
             state.f.toggle_half_carry_flag(true)
           end
+
+          protected :bit_test_byte_register
         end
       end
     end
