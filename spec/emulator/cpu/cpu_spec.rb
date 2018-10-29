@@ -1617,19 +1617,32 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
-    context 'PUSH BC' do
-      it 'should execute instruction' do
-        mmu[0x00] = 0xC5
+    [
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0xC5},
+        {register: :de, high_register: :d, low_register: :e, instruction: 0xD5},
+        {register: :hl, high_register: :h, low_register: :l, instruction: 0xE5},
+        {register: :af, high_register: :a, low_register: :f, instruction: 0xF5},
+    ].each do |options|
+      register = options[:register]
+      high_register = options[:high_register]
+      low_register = options[:low_register]
+      instruction = options[:instruction]
 
-        state.bc.write_value(0xEEAB)
-        state.sp.write_value(0xFFFE)
+      context "PUSH #{register.to_s.upcase}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
 
-        subject.tick
+          state.send(register).write_value(0xEEAB)
+          state.sp.write_value(0xFFFE)
 
-        expect(state).to match_cpu_state(pc: 0x01, b: 0xEE, c: 0xAB, sp: 0xFFFC)
-        expect(mmu[0xFFFD]).to eq(0xEE)
-        expect(mmu[0xFFFC]).to eq(0xAB)
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, :"#{high_register}" => 0xEE, :"#{low_register}" => 0xAB, sp: 0xFFFC)
+          expect(mmu[0xFFFD]).to eq(0xEE)
+          expect(mmu[0xFFFC]).to eq(0xAB)
+        end
       end
     end
+
   end
 end
