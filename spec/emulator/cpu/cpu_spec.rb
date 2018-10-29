@@ -123,6 +123,21 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context "LD (a16),A" do
+      it 'should execute instruction' do
+        mmu[0x00] = 0xEA
+        mmu[0x01] = 0xCC
+        mmu[0x02] = 0xEE
+
+        state.a.write_value(0xAA)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x03, a: 0xAA)
+        expect(mmu[0xEECC]).to eq(0xAA)
+      end
+    end
+
     [
         {register: :bc, high_register: :b, low_register: :c, instruction: 0x03},
         {register: :de, high_register: :d, low_register: :e, instruction: 0x13},

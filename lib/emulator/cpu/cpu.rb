@@ -158,6 +158,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Ope1.new,
           ::Emulator::Cpu::Instruction::Ope5.new,
           ::Emulator::Cpu::Instruction::Ope2.new,
+          ::Emulator::Cpu::Instruction::Opea.new,
           ::Emulator::Cpu::Instruction::Opf1.new,
           ::Emulator::Cpu::Instruction::Opf5.new,
           ::Emulator::Cpu::Instruction::Opfe.new
