@@ -139,6 +139,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Opad.new,
           ::Emulator::Cpu::Instruction::Opaf.new,
           ::Emulator::Cpu::Instruction::Opcb7c.new,
+          ::Emulator::Cpu::Instruction::Opcd.new,
           ::Emulator::Cpu::Instruction::Ope0.new,
           ::Emulator::Cpu::Instruction::Ope2.new
       ].freeze
@@ -153,10 +154,15 @@ module Emulator
 
       def tick
         opcode = fetch_opcode
-        # puts "0x#{opcode.to_s(16).rjust(1, '0')}"
         # puts @state
         instruction = @instructions[::Emulator::Cpu::Instruction::InstructionId.new(opcode)]
-        raise NotImplementedError if instruction.nil?
+        if instruction.nil?
+          puts "0x#{opcode.to_s(16).rjust(1, '0')}"
+          raise NotImplementedError
+        end
+
+        # puts instruction.to_s
+
         instruction.execute(mmu: @mmu, state: @state)
       end
 

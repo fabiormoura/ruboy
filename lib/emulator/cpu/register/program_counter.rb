@@ -6,8 +6,8 @@ module Emulator
           super(size_in_bits: 16, value: value, label: 'PC')
         end
 
-        def increment
-          write_value(read_value + 1)
+        def increment(offset: 1)
+          write_value(read_value + offset)
         end
       end
     end

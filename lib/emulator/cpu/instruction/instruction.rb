@@ -10,7 +10,7 @@ module Emulator
         def initialize(instruction_id:, cycles:, label:)
           @instruction_id = instruction_id
           @cycles = cycles
-          @label
+          @label = label
         end
 
         # @param [::Emulator::Cpu::State] state

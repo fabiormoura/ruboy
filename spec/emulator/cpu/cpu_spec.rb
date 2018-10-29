@@ -1456,5 +1456,21 @@ RSpec.describe Emulator::Cpu::Cpu do
         expect(mmu[0xFFDD]).to eq(0xCD)
       end
     end
+
+    context 'CALL a16' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0xCD
+        mmu[0x01] = 0xBB
+        mmu[0x02] = 0xAA
+
+        state.sp.write_value(0xFFFE)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0xAABB, sp: 0xFFFC)
+        expect(mmu[0xFFFD]).to eq(0x00)
+        expect(mmu[0xFFFC]).to eq(0x03)
+      end
+    end
   end
 end
