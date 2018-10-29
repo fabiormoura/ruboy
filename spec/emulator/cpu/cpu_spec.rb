@@ -1259,6 +1259,19 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'LDH A,(a8)' do
+      it 'should execute instruction' do
+        mmu[0x00] = 0xF0
+        mmu[0x01] = 0xCC
+        mmu[0xFFCC] = 0xBB
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x02, a: 0xBB)
+        expect(mmu[0xFFCC]).to eq(0xBB)
+      end
+    end
+
     context 'CPL' do
       it 'should execute instruction' do
         mmu[0x00] = 0x2F

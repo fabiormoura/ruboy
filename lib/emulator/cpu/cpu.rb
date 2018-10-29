@@ -159,6 +159,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Ope5.new,
           ::Emulator::Cpu::Instruction::Ope2.new,
           ::Emulator::Cpu::Instruction::Opea.new,
+          ::Emulator::Cpu::Instruction::Opf0.new,
           ::Emulator::Cpu::Instruction::Opf1.new,
           ::Emulator::Cpu::Instruction::Opf5.new,
           ::Emulator::Cpu::Instruction::Opfe.new
@@ -174,15 +175,14 @@ module Emulator
 
       def tick
         opcode = fetch_opcode
-        # puts @state
         instruction = @instructions[::Emulator::Cpu::Instruction::InstructionId.new(opcode)]
         if instruction.nil?
-          puts "0x#{opcode.to_s(16).rjust(1, '0')}"
+          puts @state
+          puts "MISSING OPCODE: 0x#{opcode.to_s(16).rjust(2, '0')}"
           raise NotImplementedError
         end
 
         # puts instruction.to_s
-
         instruction.execute(mmu: @mmu, state: @state)
       end
 
