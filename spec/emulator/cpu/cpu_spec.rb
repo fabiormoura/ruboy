@@ -1859,6 +1859,21 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'RET' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xC9
+
+          mmu[0xFFFC] = 0xDD
+          mmu[0xFFFD] = 0xEE
+
+          state.sp.write_value(0xFFFC)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE)
+        end
+    end
+
     [
         {register: :bc, high_register: :b, low_register: :c, instruction: 0xC1},
         {register: :de, high_register: :d, low_register: :e, instruction: 0xD1},
