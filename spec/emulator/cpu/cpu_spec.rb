@@ -1770,5 +1770,101 @@ RSpec.describe Emulator::Cpu::Cpu do
         end
       end
     end
+
+    context 'RET NC' do
+      context 'when carry flag is reset' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xD0
+
+          mmu[0xFFFC] = 0xDD
+          mmu[0xFFFD] = 0xEE
+
+
+          state.sp.write_value(0xFFFC)
+
+          state.f.toggle_carry_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE)
+        end
+      end
+
+      context 'when carry flag is set' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xD0
+
+          state.f.toggle_carry_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1, f: 0b0001_0000)
+        end
+      end
+    end
+
+    context 'RET Z' do
+      context 'when zero flag is set' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xC8
+
+          mmu[0xFFFC] = 0xDD
+          mmu[0xFFFD] = 0xEE
+
+
+          state.sp.write_value(0xFFFC)
+
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE, f: 0b1000_0000)
+        end
+      end
+
+      context 'when zero flag is reset' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xC8
+
+          state.f.toggle_zero_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1)
+        end
+      end
+    end
+
+    context 'RET C' do
+      context 'when carry flag is set' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xD8
+
+          mmu[0xFFFC] = 0xDD
+          mmu[0xFFFD] = 0xEE
+
+
+          state.sp.write_value(0xFFFC)
+
+          state.f.toggle_carry_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0xEEDD, sp: 0xFFFE, f: 0b0001_0000)
+        end
+      end
+
+      context 'when carry flag is reset' do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xD8
+
+          state.f.toggle_carry_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1)
+        end
+      end
+    end
   end
 end
