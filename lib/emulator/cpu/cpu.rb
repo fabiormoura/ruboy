@@ -140,6 +140,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Opaf.new,
           ::Emulator::Cpu::Instruction::Opc4.new,
           ::Emulator::Cpu::Instruction::Opc5.new,
+          ::Emulator::Cpu::Instruction::Opcb11.new,
           ::Emulator::Cpu::Instruction::Opcb7c.new,
           ::Emulator::Cpu::Instruction::Opcc.new,
           ::Emulator::Cpu::Instruction::Opcd.new,

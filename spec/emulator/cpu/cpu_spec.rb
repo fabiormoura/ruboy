@@ -178,7 +178,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           subject.tick
 
-          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0000_000)
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b0000_0001, f: 0b0000_0000)
         end
 
         it 'should disable zero flag when result is not zero' do
@@ -473,7 +473,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
       it 'should carry flag be 0 when bit rotated is 0' do
         mmu[0x00] = 0x07
-        state.a.write_value(0b0000_000)
+        state.a.write_value(0b0000_0000)
 
         subject.tick
 
@@ -834,7 +834,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
       it 'should carry flag be 0 when bit rotated is 0' do
         mmu[0x00] = 0x17
-        state.a.write_value(0b0000_000)
+        state.a.write_value(0b0000_0000)
 
         subject.tick
 
@@ -904,7 +904,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
       it 'should carry flag be 0 when bit rotated is 0' do
         mmu[0x00] = 0x1F
-        state.a.write_value(0b0000_000)
+        state.a.write_value(0b0000_0000)
 
         subject.tick
 
@@ -1644,5 +1644,99 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+
+    [
+        {register: :c, instruction: 0x11},
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
+      context "RL #{register}" do
+        it 'should execute instruction' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.f.toggle_carry_flag(true)
+          state.send(register).write_value(0b0110_0010)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b1100_0101, f: 0b0000_0000)
+        end
+
+        it 'should set zero flag when result is zero' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0)
+          state.f.toggle_zero_flag(false)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0, f: 0b1000_0000)
+        end
+
+        it 'should reset zero flag when result is not zero' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0b0000_0001)
+          state.f.toggle_zero_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_0010, f: 0b0000_0000)
+        end
+
+        it 'should reset subtract flag' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0b0000_0001)
+          state.f.toggle_subtract_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_0010, f: 0b0000_0000)
+        end
+
+        it 'should reset subtract flag' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0b0000_0001)
+          state.f.toggle_subtract_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_0010, f: 0b0000_0000)
+        end
+
+        it 'should reset half carry flag' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0b0000_0001)
+          state.f.toggle_half_carry_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_0010, f: 0b0000_0000)
+        end
+
+        it 'should carry flag be 1 when bit rotated is 1' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0b1000_0100)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_1000, f: 0b0001_0000)
+        end
+
+        it 'should carry flag be 0 when bit rotated is 0' do
+          mmu[0x00] = 0xCB
+          mmu[0x01] = instruction
+          state.send(register).write_value(0b0000_0010)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x2, :"#{register}" => 0b0000_0100, f: 0b0000_0000)
+        end
+      end
+    end
   end
 end
