@@ -1747,9 +1747,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           mmu[0xFFFC] = 0xDD
           mmu[0xFFFD] = 0xEE
 
-
           state.sp.write_value(0xFFFC)
-
           state.f.toggle_zero_flag(false)
 
           subject.tick
@@ -1779,9 +1777,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           mmu[0xFFFC] = 0xDD
           mmu[0xFFFD] = 0xEE
 
-
           state.sp.write_value(0xFFFC)
-
           state.f.toggle_carry_flag(false)
 
           subject.tick
@@ -1811,9 +1807,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           mmu[0xFFFC] = 0xDD
           mmu[0xFFFD] = 0xEE
 
-
           state.sp.write_value(0xFFFC)
-
           state.f.toggle_zero_flag(true)
 
           subject.tick
@@ -1843,9 +1837,7 @@ RSpec.describe Emulator::Cpu::Cpu do
           mmu[0xFFFC] = 0xDD
           mmu[0xFFFD] = 0xEE
 
-
           state.sp.write_value(0xFFFC)
-
           state.f.toggle_carry_flag(true)
 
           subject.tick
@@ -1863,6 +1855,28 @@ RSpec.describe Emulator::Cpu::Cpu do
           subject.tick
 
           expect(state).to match_cpu_state(pc: 0x1)
+        end
+      end
+    end
+
+    [
+        {register: :bc, high_register: :b, low_register: :c, instruction: 0xC1},
+    ].each do |options|
+      register = options[:register]
+      high_register = options[:high_register]
+      low_register = options[:low_register]
+      instruction = options[:instruction]
+      context "POP #{register}" do
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+          mmu[0xFFFC] = 0xDD
+          mmu[0xFFFD] = 0xEE
+
+          state.sp.write_value(0xFFFC)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, sp: 0xFFFE, :"#{high_register}" => 0xEE, :"#{low_register}" => 0xDD)
         end
       end
     end
