@@ -9,10 +9,11 @@ module Emulator
           # @param [::Emulator::Cpu::State] state
           # @param [::Emulator::Mmu] mmu
           def jump_to_signed_byte_offset(state:, mmu:)
-            current_addr = state.pc.read_value
-            addr = current_addr + 1
-            addr += signed_byte_value(mmu[current_addr]) if !block_given? || yield
-            state.pc.write_value(addr)
+            jump_address = signed_byte_value(mmu[state.pc.read_value])
+            state.pc.increment
+            updated_address = state.pc.read_value
+            updated_address += jump_address if !block_given? || yield
+            state.pc.write_value(updated_address)
           end
 
           protected :jump_to_signed_byte_offset
