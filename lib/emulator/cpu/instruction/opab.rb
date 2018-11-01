@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           xor_byte_register(register: :a, value: state.e.read_value, state: state)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end
       end
     end

@@ -20,6 +20,7 @@ module Emulator
           high_value = state.sp.read_value >> 8
           mmu[addr] = low_value
           mmu[addr + 1] = high_value
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 20)
         end
       end
     end

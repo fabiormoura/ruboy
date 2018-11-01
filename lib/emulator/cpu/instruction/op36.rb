@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           load_target_address_from_pc_position_address(target_address: state.hl.read_value, state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end
       end
     end

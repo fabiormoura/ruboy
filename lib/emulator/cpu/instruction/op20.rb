@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           jump_to_signed_byte_offset(state: state, mmu: mmu) {!state.f.zero_flag_enabled?}
+          ::Emulator::Cpu::Instruction::Result.new(cycles: !state.f.zero_flag_enabled? ? 12 : 8)
         end
       end
     end

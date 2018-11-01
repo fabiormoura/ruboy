@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           push_word_value_onto_stack(value: state.af.read_value, state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 16)
         end
       end
     end

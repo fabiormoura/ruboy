@@ -3,12 +3,18 @@ require_relative '../../spec_helper'
 RSpec.describe Emulator::Cpu::Cpu do
   let(:mmu) {Emulator::MmuStub.new}
   let(:state) {Emulator::Cpu::State.new}
+  let(:channel) {instance_double(::Emulator::BroadcastChannel)}
 
-  subject {described_class.new(mmu: mmu, state: state)}
+  subject {described_class.new(mmu: mmu, state: state, channel: channel)}
 
   context 'instructions' do
     context 'NOP' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x00, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
+
         mmu[0x00] = 0x00
         subject.tick
         expect(state).to match_cpu_state(pc: 0x1)
@@ -26,6 +32,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD #{register.to_s.upcase},d16" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 12, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
           mmu[0x01] = 0xAB
@@ -37,6 +47,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD SP,d16" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x31, cycles: 12, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x31
         mmu[0x01] = 0xAB
@@ -57,6 +71,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD (#{register.to_s.upcase}),A" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -72,6 +90,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD (HL+),A" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x22, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x22
 
@@ -86,6 +108,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD (HL-),A" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x32, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x32
 
@@ -100,6 +126,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD A,(HL+)" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x2A, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x2A
         mmu[0xAABB] = 0xCC
@@ -112,6 +142,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD A,(HL-)" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x3A, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x3A
         mmu[0xAABB] = 0xCC
@@ -124,6 +158,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD (a16),A" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xEA, cycles: 16, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xEA
         mmu[0x01] = 0xCC
@@ -149,6 +187,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "INC #{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -162,6 +204,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'INC SP' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x33, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x33
 
@@ -186,6 +232,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "INC #{register.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 4, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -232,6 +282,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "INC (HL)" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x34, cycles: 12, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x34
         mmu[0x1122] = 0xBB
@@ -297,6 +351,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "DEC #{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 4, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -341,6 +399,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "DEC (HL)" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x35, cycles: 12, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x35
         mmu[0xAABB] = 0b0000_1000
@@ -404,6 +466,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD #{register.to_s.upcase},d8" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
           mmu[0x01] = 0xAB
@@ -414,6 +480,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD (HL),d8" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x36, cycles: 12, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x36
         mmu[0x01] = 0xCC
@@ -428,6 +498,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'RLCA' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x07, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x07
         state.a.write_value(0b0110_0010)
@@ -497,6 +571,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'LD (a16),SP' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x08, cycles: 20, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x08
         mmu[0x01] = 0xAB
@@ -526,6 +604,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "ADD #{primary_register.to_s.upcase},#{secondary_register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -572,6 +654,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "ADD HL,HL" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x29, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x29
 
@@ -615,6 +701,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "ADD HL,SP" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x39, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x39
 
@@ -669,6 +759,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD A,(#{register.upcase})" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -694,6 +788,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "DEC #{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -707,6 +805,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "DEC SP" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x3B, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x3B
 
@@ -719,6 +821,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'RRCA' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x0F, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x0F
         state.a.write_value(0b0110_0010)
@@ -788,6 +894,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'RLA' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x17, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x17
         state.f.toggle_carry_flag(true)
@@ -858,6 +968,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'RRA' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x1F, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x1F
         state.f.toggle_carry_flag(true)
@@ -928,6 +1042,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'JR r8' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x18, cycles: 12, state: state))
+      end
+
       it 'should increment when offset is positive' do
         mmu[0x00] = 0x18
         mmu[0x01] = 0b000_0010
@@ -951,6 +1069,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'JR NZ,r8' do
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x20, cycles: 12, state: state))
+        end
+
         it 'should jump to offset' do
           mmu[0x00] = 0x20
           mmu[0x01] = 0b000_0010
@@ -977,6 +1099,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x20, cycles: 8, state: state))
+        end
+
         it 'should not jump to offset' do
           mmu[0x00] = 0x20
           mmu[0x01] = 0b000_0010
@@ -992,6 +1118,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'JR Z,r8' do
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x28, cycles: 12, state: state))
+        end
+
         it 'should jump to offset' do
           mmu[0x00] = 0x28
           mmu[0x01] = 0b000_0010
@@ -1018,6 +1148,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x28, cycles: 8, state: state))
+        end
+
         it 'should not jump to offset' do
           mmu[0x00] = 0x28
           mmu[0x01] = 0b000_0010
@@ -1033,6 +1167,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'JR NC,r8' do
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x30, cycles: 12, state: state))
+        end
+
         it 'should jump to offset' do
           mmu[0x00] = 0x30
           mmu[0x01] = 0b000_0010
@@ -1059,6 +1197,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x30, cycles: 8, state: state))
+        end
+
         it 'should not jump to offset' do
           mmu[0x00] = 0x30
           mmu[0x01] = 0b000_0010
@@ -1074,6 +1216,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'JR C,r8' do
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x38, cycles: 12, state: state))
+        end
+
         it 'should jump to offset' do
           mmu[0x00] = 0x38
           mmu[0x01] = 0b000_0010
@@ -1100,6 +1246,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x38, cycles: 8, state: state))
+        end
+
         it 'should not jump to offset' do
           mmu[0x00] = 0x38
           mmu[0x01] = 0b000_0010
@@ -1169,6 +1319,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD #{target_register.to_s.upcase},#{source_register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 4, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -1195,6 +1349,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD #{register.to_s.upcase},(HL)" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
           mmu[0xAA11] = 0xEF
@@ -1219,6 +1377,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "LD (HL),#{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -1234,6 +1396,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'LD (HL),H' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x74, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x74
 
@@ -1247,6 +1413,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'LD (HL),H' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x75, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x75
 
@@ -1260,6 +1430,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'LDH A,(a8)' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xF0, cycles: 12, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xF0
         mmu[0x01] = 0xCC
@@ -1273,6 +1447,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'CPL' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x2F, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x2F
         state.a.write_value(0b1111_0000)
@@ -1284,6 +1462,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'SCF' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x37, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0x37
         state.f.toggle_carry_flag(false)
@@ -1297,6 +1479,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'CCF' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x3F, cycles: 4, state: state))
+      end
+
       it 'should reset carry flag if set' do
         mmu[0x00] = 0x3F
         state.f.toggle_carry_flag(true)
@@ -1332,6 +1518,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "XOR #{register}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 4, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -1406,6 +1596,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'XOR A' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xAF, cycles: 4, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xAF
 
@@ -1425,6 +1619,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "BIT #{bit},#{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: (0xCB << 8) + instruction, cycles: 8, state: state))
+        end
+
         it 'should set zero flag when bit is 0' do
           mmu[0x00] = 0xCB
           mmu[0x01] = instruction
@@ -1458,6 +1656,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LDH (a8),A" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xE0, cycles: 12, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xE0
         mmu[0x01] = 0xDA
@@ -1472,6 +1674,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context "LD (C),A" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xE2, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xE2
 
@@ -1487,6 +1693,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'CALL NZ,a16' do
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC4, cycles: 24, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xC4
           mmu[0x01] = 0xBB
@@ -1504,6 +1714,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC4, cycles: 12, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xC4
           mmu[0x01] = 0xBB
@@ -1523,6 +1737,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'CALL NC,a16' do
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xD4, cycles: 24, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xD4
           mmu[0x01] = 0xBB
@@ -1540,6 +1758,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xD4, cycles: 12, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xD4
           mmu[0x01] = 0xBB
@@ -1559,6 +1781,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'CALL Z,a16' do
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xCC, cycles: 24, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xCC
           mmu[0x01] = 0xBB
@@ -1576,6 +1802,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xCC, cycles: 12, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xCC
           mmu[0x01] = 0xBB
@@ -1595,6 +1825,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'CALL C,a16' do
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xDC, cycles: 24, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xDC
           mmu[0x01] = 0xBB
@@ -1612,6 +1846,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xDC, cycles: 12, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xDC
           mmu[0x01] = 0xBB
@@ -1630,6 +1868,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'CALL a16' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xCD, cycles: 24, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xCD
         mmu[0x01] = 0xBB
@@ -1657,6 +1899,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       instruction = options[:instruction]
 
       context "PUSH #{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 16, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
 
@@ -1679,6 +1925,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       register = options[:register]
       instruction = options[:instruction]
       context "RL #{register}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: (0xCB << 8) + instruction, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xCB
           mmu[0x01] = instruction
@@ -1769,6 +2019,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'RET NZ' do
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC0, cycles: 20, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xC0
 
@@ -1785,6 +2039,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC0, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xC0
 
@@ -1799,6 +2057,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'RET NC' do
       context 'when carry flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xD0, cycles: 20, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xD0
 
@@ -1815,6 +2077,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when carry flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xD0, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xD0
 
@@ -1829,6 +2095,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'RET Z' do
       context 'when zero flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC8, cycles: 20, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xC8
 
@@ -1845,6 +2115,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when zero flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC8, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xC8
 
@@ -1859,6 +2133,10 @@ RSpec.describe Emulator::Cpu::Cpu do
 
     context 'RET C' do
       context 'when carry flag is set' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xD8, cycles: 20, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xD8
 
@@ -1875,6 +2153,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       context 'when carry flag is reset' do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xD8, cycles: 8, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = 0xD8
 
@@ -1888,6 +2170,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'RET' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC9, cycles: 16, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xC9
 
@@ -1913,6 +2199,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       low_register = options[:low_register]
       instruction = options[:instruction]
       context "POP #{register}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 12, state: state))
+        end
+
         it 'should execute instruction' do
           mmu[0x00] = instruction
           mmu[0xFFFC] = 0xDD
@@ -1928,6 +2218,10 @@ RSpec.describe Emulator::Cpu::Cpu do
     end
 
     context 'CP d8' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xFE, cycles: 8, state: state))
+      end
+
       it 'should execute instruction' do
         mmu[0x00] = 0xFE
         mmu[0x01] = 0x0A

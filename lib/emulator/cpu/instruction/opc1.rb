@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           pop_stack_onto_word_register(register: :bc, state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end
       end
     end

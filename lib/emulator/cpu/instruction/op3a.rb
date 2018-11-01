@@ -13,6 +13,7 @@ module Emulator
         def execute(state:, mmu:)
           load_byte_register_from_address(address: state.hl.read_value, register: :a, state: state, mmu: mmu)
           state.hl.write_value(state.hl.read_value - 0x01)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end

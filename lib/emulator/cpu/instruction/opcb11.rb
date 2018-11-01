@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           rotate_left_byte_register_using_carry_flag(register: :c, state: state, reset_zero_flag: false)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end

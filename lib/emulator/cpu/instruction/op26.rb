@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           load_byte_register_from_pc_position_address(register: :h, state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end

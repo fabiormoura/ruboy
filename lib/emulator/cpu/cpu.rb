@@ -165,25 +165,27 @@ module Emulator
           ::Emulator::Cpu::Instruction::Opfe.new
       ].freeze
 
-      # @param [Emulator::Mmu] mmu
-      # @param [Emulator::Cpu::State] state
-      def initialize(mmu:, state:)
+      # @param [::Emulator::Mmu] mmu
+      # @param [::Emulator::Cpu::State] state
+      # @param [::Emulator::BroadcastChannel] channel
+      def initialize(mmu:, state:, channel:)
         @state = state
         @mmu = mmu
+        @channel = channel
         @instructions = INSTRUCTIONS.map {|instruction| [instruction.instruction_id, instruction]}.to_h
       end
 
       def tick
         opcode = fetch_opcode
         instruction = @instructions[::Emulator::Cpu::Instruction::InstructionId.new(opcode)]
+
         if instruction.nil?
-          puts @state
-          puts "MISSING OPCODE: 0x#{opcode.to_s(16).rjust(2, '0')}"
-          raise NotImplementedError
+          raise NotImplementedError, "MISSING OPCODE: 0x#{opcode.to_s(16).rjust(2, '0')}"
         end
 
-        # puts instruction.to_s
-        instruction.execute(mmu: @mmu, state: @state)
+        instruction_result = instruction.execute(mmu: @mmu, state: @state)
+
+        @channel.announce(::Emulator::Cpu::Event::CpuTicked.new(opcode: opcode, cycles: instruction_result.cycles, state: @state))
       end
 
       def fetch_opcode

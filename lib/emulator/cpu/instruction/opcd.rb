@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           call_address(state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 24)
         end
       end
     end

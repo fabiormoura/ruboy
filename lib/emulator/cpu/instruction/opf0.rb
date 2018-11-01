@@ -12,6 +12,7 @@ module Emulator
           address_offset = mmu[state.pc.read_value]
           state.pc.increment
           state.a.write_value mmu[0xFF00 + address_offset]
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end
       end
     end

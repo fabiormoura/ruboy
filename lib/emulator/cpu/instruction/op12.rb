@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           load_word_register_address_from_byte_register(address_register: :de, register: :a, state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end

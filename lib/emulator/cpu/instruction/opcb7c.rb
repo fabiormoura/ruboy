@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           bit_test_byte_register(bit: 7, register: :h, state: state)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end

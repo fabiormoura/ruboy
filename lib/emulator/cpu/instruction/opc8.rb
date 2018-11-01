@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           return_address(state: state, mmu: mmu) {state.f.zero_flag_enabled?}
+          ::Emulator::Cpu::Instruction::Result.new(cycles: state.f.zero_flag_enabled? ? 20 : 8)
         end
       end
     end

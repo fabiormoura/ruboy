@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           jump_to_signed_byte_offset(state: state, mmu: mmu)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end
       end
     end

@@ -14,6 +14,7 @@ module Emulator
           state.a.write_value(~state.a.read_value & 0xFF)
           state.f.toggle_half_carry_flag(true)
           state.f.toggle_subtract_flag(true)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end
       end
     end

@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           decrement_byte_register(register: :d, state: state)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end
       end
     end

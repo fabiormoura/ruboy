@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           increment_byte_register(register: :h, state: state)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end
       end
     end

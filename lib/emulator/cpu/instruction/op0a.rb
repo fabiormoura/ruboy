@@ -10,6 +10,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           state.a.write_value mmu[state.bc.read_value]
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end

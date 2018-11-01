@@ -17,6 +17,7 @@ module Emulator
           updated_value = mmu[addr]
 
           ::Emulator::Cpu::Instruction::Helper::Flags::Increment.update_register_flags(state: state, value: value, updated_value: updated_value)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end
       end
     end

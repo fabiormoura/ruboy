@@ -12,6 +12,7 @@ module Emulator
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
           call_address(state: state, mmu: mmu) {!state.f.carry_flag_enabled?}
+          ::Emulator::Cpu::Instruction::Result.new(cycles: !state.f.carry_flag_enabled? ? 24 : 12)
         end
       end
     end

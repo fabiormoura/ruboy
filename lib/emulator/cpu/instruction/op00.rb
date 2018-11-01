@@ -9,6 +9,7 @@ module Emulator
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def execute(state:, mmu:)
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end
       end
     end

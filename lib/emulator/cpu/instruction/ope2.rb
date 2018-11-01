@@ -14,6 +14,7 @@ module Emulator
           address = 0xFF00 + state.c.read_value
           load_address_from_byte_register(address: address, register: :a, state: state, mmu: mmu)
           state.pc.increment
+          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end
       end
     end
