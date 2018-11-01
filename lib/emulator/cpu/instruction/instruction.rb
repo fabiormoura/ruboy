@@ -2,8 +2,8 @@ module Emulator
   module Cpu
     module Instruction
       class Instruction
-        attr_reader :instruction_id
-        attr_reader :cycles
+        attr_reader :instruction_id, :cycles, :label
+
         # @param [::Emulator::Cpu::Instruction::InstructionId] instruction_id
         # @param [Integer] cycles
         # @param [String] label

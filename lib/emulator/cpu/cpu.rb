@@ -131,6 +131,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Op7d.new,
           ::Emulator::Cpu::Instruction::Op7e.new,
           ::Emulator::Cpu::Instruction::Op7f.new,
+          ::Emulator::Cpu::Instruction::Op90.new,
           ::Emulator::Cpu::Instruction::Opa8.new,
           ::Emulator::Cpu::Instruction::Opa9.new,
           ::Emulator::Cpu::Instruction::Opaa.new,

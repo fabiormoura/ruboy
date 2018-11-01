@@ -2198,7 +2198,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       high_register = options[:high_register]
       low_register = options[:low_register]
       instruction = options[:instruction]
-      context "POP #{register}" do
+      context "POP #{register.to_s.upcase}" do
         before do
           expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 12, state: state))
         end
@@ -2264,6 +2264,63 @@ RSpec.describe Emulator::Cpu::Cpu do
         subject.tick
 
         expect(state).to match_cpu_state(pc: 0x02, a: 0b0001_0000, f: 0b0110_0000)
+      end
+    end
+
+    [
+        {register: :b, instruction: 0x90}
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
+
+      context "SUB #{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 4, state: state))
+        end
+
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0x0B)
+          state.send(register).write_value(0x0A)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, a: 0x01, :"#{register}" => 0x0A, f: 0b0100_0000)
+        end
+
+        it 'should set zero flag when result is zero' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0x0B)
+          state.send(register).write_value(0x0B)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, a: 0x0, :"#{register}" => 0x0B, f: 0b1100_0000)
+        end
+
+        it 'should set carry flag when borrowing' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0000_1000)
+          state.send(register).write_value(0b0010_0000)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, a: 0xE8, :"#{register}" => 0b0010_0000, f: 0b0101_0000)
+        end
+
+        it 'should set half carry flag when borrowing from bit 4' do
+          mmu[0x00] = instruction
+
+          state.a.write_value(0b0001_0000)
+          state.send(register).write_value(0b0000_0100)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x01, a: 0x0C, :"#{register}" => 0b0000_0100, f: 0b0110_0000)
+        end
       end
     end
   end
