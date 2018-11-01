@@ -61,6 +61,24 @@ module Emulator
           protected :add_word_registers
 
           # @param [Symbol] register
+          # @param [Integer] operand_value
+          # @param [::Emulator::Cpu::State] state
+          def add_value_to_byte_register(register:, operand_value:, state:)
+            register_value = state.send(register).read_value
+
+            value = register_value + operand_value
+            u8_value = (register_value + operand_value) & 0xFF
+
+            state.a.write_value(u8_value)
+
+            state.f.toggle_subtract_flag(false)
+            state.f.toggle_half_carry_flag((register_value & 0xF) + (operand_value & 0xF) > 0xF)
+            state.f.toggle_carry_flag(value >> 8 > 0)
+          end
+
+          protected :add_value_to_byte_register
+
+          # @param [Symbol] register
           # @param [Integer] value
           # @param [::Emulator::Cpu::State] state
           def xor_byte_register(register:, value:, state:)

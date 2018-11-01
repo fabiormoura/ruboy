@@ -2282,7 +2282,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
         subject.tick
 
-        expect(state).to match_cpu_state(pc: 0x01, a: 0x0B, h: 0x20, l:0x20, f: 0b0100_0000)
+        expect(state).to match_cpu_state(pc: 0x01, a: 0x0B, h: 0x20, l: 0x20, f: 0b0100_0000)
       end
 
       it 'should set zero flag when result is zero' do
@@ -2294,7 +2294,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
         subject.tick
 
-        expect(state).to match_cpu_state(pc: 0x01, a: 0x0B, h: 0x20, l:0x20, f: 0b1100_0000)
+        expect(state).to match_cpu_state(pc: 0x01, a: 0x0B, h: 0x20, l: 0x20, f: 0b1100_0000)
       end
 
       it 'should set carry flag when borrowing' do
@@ -2306,7 +2306,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
         subject.tick
 
-        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_1000, h: 0x20, l:0x20, f: 0b0101_0000)
+        expect(state).to match_cpu_state(pc: 0x01, a: 0b0000_1000, h: 0x20, l: 0x20, f: 0b0101_0000)
       end
 
       it 'should set half carry flag when borrowing from bit 4' do
@@ -2318,7 +2318,7 @@ RSpec.describe Emulator::Cpu::Cpu do
 
         subject.tick
 
-        expect(state).to match_cpu_state(pc: 0x01, a: 0b0001_0000, h: 0x20, l:0x20, f: 0b0110_0000)
+        expect(state).to match_cpu_state(pc: 0x01, a: 0b0001_0000, h: 0x20, l: 0x20, f: 0b0110_0000)
       end
     end
 
@@ -2376,6 +2376,62 @@ RSpec.describe Emulator::Cpu::Cpu do
 
           expect(state).to match_cpu_state(pc: 0x01, a: 0x0C, :"#{register}" => 0b0000_0100, f: 0b0110_0000)
         end
+      end
+    end
+
+    context "ADD A,HL" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x86, cycles: 8, state: state))
+      end
+
+      it 'should execute instruction' do
+        mmu[0x00] = 0x86
+        mmu[0x2020] = 0x02
+
+        state.a.write_value 0x01
+        state.hl.write_value 0x2020
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, :a => 0x03, h: 0x20, l: 0x20)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x86
+        mmu[0x2020] = 0x00
+
+        state.a.write_value 0x01
+        state.hl.write_value 0x2020
+
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0x01, h: 0x20, l: 0x20, f: 0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x86
+        mmu[0x2020] = 0b0000_1000
+
+        state.a.write_value 0b0000_1000
+        state.hl.write_value 0x2020
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b0001_0000, h: 0x20, l: 0x20, f: 0b0010_0000)
+      end
+
+      it 'should set carry flag' do
+        mmu[0x00] = 0x86
+        mmu[0x2020] = 0b1111_1111
+
+        state.a.write_value 0b1111_1111
+        state.hl.write_value 0x2020
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b1111_1110, h: 0x20, l: 0x20, f: 0b0011_0000)
       end
     end
   end
