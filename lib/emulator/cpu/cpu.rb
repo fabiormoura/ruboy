@@ -22,11 +22,12 @@ module Emulator
 
       def fetch_opcode
         opcode = @mmu[@state.pc.read_value]
-        @state.pc.increment
-        return opcode unless opcode == 0xCB
-
-        opcode = opcode << 8 | @mmu[@state.pc.read_value]
-        @state.pc.increment
+        if opcode == 0xCB
+          opcode = (opcode << 8) | @mmu[@state.pc.read_value + 1]
+          @state.pc.increment(offset: 2)
+        else
+          @state.pc.increment
+        end
         opcode
       end
 
