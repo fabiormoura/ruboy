@@ -6,9 +6,9 @@ module Emulator
       # @param [::Emulator::Mmu] mmu
       # @param [::Emulator::BroadcastChannel] channel
       def initialize(mmu:, channel:)
-        @machine = ::Emulator::Ppu::State::Machine.new(ppu: self)
+        @machine = ::Emulator::Ppu::State::Machine.new(ppu: self, channel: channel)
         @lcd_control = ::Emulator::Ppu::State::LcdControl.new(mmu: mmu)
-        @lcd_status = ::Emulator::Ppu::State::LcdStatus.new(mmu: mmu)
+        @lcd_status = ::Emulator::Ppu::State::LcdStatus.new(mmu: mmu, channel: channel)
         @lcd_y = ::Emulator::Ppu::State::LcdY.new(mmu: mmu)
         @mmu = mmu
         @cycles = 0
