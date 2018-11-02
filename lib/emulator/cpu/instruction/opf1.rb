@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Opf1 < ::Emulator::Cpu::Instruction::Instruction
+      module Opf1
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Stack
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0xF1), cycles: 12, label: 'POP AF')
-        end
+        mnemonic_definition 'POP AF', opcode: 0xF1
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           pop_stack_onto_word_register(register: :af, state: state, mmu: mmu)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end

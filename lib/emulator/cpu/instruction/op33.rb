@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op33 < ::Emulator::Cpu::Instruction::Instruction
+      module Op33
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Arithmetic
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x33), cycles: 8, label: 'INC SP')
-        end
+        mnemonic_definition 'INC SP', opcode: 0x33
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           increment_word_register(register: :sp, state: state)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end

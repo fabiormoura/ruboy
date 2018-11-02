@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Opfe < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0xFE), cycles: 8, label: 'CP d8')
-        end
+      module Opfe
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'CP d8', opcode: 0xFE
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           operand_value = mmu[state.pc.read_value]
           state.pc.increment
 

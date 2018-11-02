@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Opbe < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0xBE), cycles: 8, label: 'CP (HL)')
-        end
+      module Opbe
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'CP (HL)', opcode: 0xBE
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           operand_value = mmu[state.hl.read_value]
 
           subtracted_value = (state.a.read_value - operand_value) & 0xFF

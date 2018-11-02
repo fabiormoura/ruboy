@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op2e < ::Emulator::Cpu::Instruction::Instruction
+      module Op2e
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Load
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x2E), cycles: 8, label: 'LD L,d8')
-        end
+        mnemonic_definition 'LD L,d8', opcode: 0x2E
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           load_byte_register_from_pc_position_address(register: :l, state: state, mmu: mmu)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end

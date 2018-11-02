@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op1a < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x1A), cycles: 8, label: 'LD A,(DE)')
-        end
+      module Op1a
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'LD A,(DE)', opcode: 0x1A
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           state.a.write_value mmu[state.de.read_value]
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end

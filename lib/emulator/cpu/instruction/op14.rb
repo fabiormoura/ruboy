@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op14 < ::Emulator::Cpu::Instruction::Instruction
+      module Op14
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Arithmetic
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x14), cycles: 4, label: 'INC D')
-        end
+        mnemonic_definition 'INC D', opcode: 0x14
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           increment_byte_register(register: :d, state: state)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end

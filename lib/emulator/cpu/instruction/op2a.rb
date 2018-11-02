@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op2a < ::Emulator::Cpu::Instruction::Instruction
+      module Op2a
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Load
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x2A), cycles: 8, label: 'LD A,(HL+)')
-        end
+        mnemonic_definition 'LD A,(HL+)', opcode: 0x2A
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           load_byte_register_from_address(address: state.hl.read_value, register: :a, state: state, mmu: mmu)
           state.hl.write_value(state.hl.read_value + 0x01)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)

@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Opcb11 < ::Emulator::Cpu::Instruction::Instruction
+      module Opcb11
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Rotate
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0xCB11), cycles: 8, label: 'RL C')
-        end
+        mnemonic_definition 'RL C', opcode: 0xCB11
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           rotate_left_byte_register_using_carry_flag(register: :c, state: state, reset_zero_flag: false)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end

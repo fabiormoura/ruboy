@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op70 < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x70), cycles: 8, label: 'LD (HL),B')
-        end
+      module Op70
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'LD (HL),B', opcode: 0x70
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           mmu[state.hl.read_value] = state.b.read_value
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end

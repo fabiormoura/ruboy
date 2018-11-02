@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op08 < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x08), cycles: 20, label: 'LD (a16),SP')
-        end
+      module Op08
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'LD (a16),SP', opcode: 0x08
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           low_addr = mmu[state.pc.read_value]
           state.pc.increment
           high_addr = mmu[state.pc.read_value]

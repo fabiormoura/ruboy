@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op35 < ::Emulator::Cpu::Instruction::Instruction
+      module Op35
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Arithmetic
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x35), cycles: 12, label: 'DEC (HL)')
-        end
+        mnemonic_definition 'DEC (HL)', opcode: 0x35
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           addr = state.hl.read_value
           value = mmu[addr]
           mmu[addr] = value - 1

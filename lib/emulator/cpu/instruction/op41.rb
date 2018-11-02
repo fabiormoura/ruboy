@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op41 < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x41), cycles: 4, label: 'LD B,C')
-        end
+      module Op41
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'LD B,C', opcode: 0x41
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           state.b.write_value state.c.read_value
           ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end

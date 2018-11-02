@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op18 < ::Emulator::Cpu::Instruction::Instruction
+      module Op18
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Jump
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x18), cycles: 12, label: 'JR r8')
-        end
+        mnemonic_definition 'JR r8', opcode: 0x18
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           jump_to_signed_byte_offset(state: state, mmu: mmu)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end

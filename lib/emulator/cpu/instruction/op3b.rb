@@ -1,14 +1,14 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op3b < ::Emulator::Cpu::Instruction::Instruction
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x3B), cycles: 8, label: 'DEC SP')
-        end
+      module Op3b
+        include ::Emulator::Cpu::Instruction::InstructionFunction
+
+        mnemonic_definition 'DEC SP', opcode: 0x3B
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           state.sp.write_value(state.sp.read_value - 1)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
         end

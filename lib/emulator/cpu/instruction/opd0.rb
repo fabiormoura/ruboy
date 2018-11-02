@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Opd0 < ::Emulator::Cpu::Instruction::Instruction
+      module Opd0
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Jump
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0xD0), cycles: 20, label: 'RET NC')
-        end
+        mnemonic_definition 'RET NC', opcode: 0xD0
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           return_address(state: state, mmu: mmu) {!state.f.carry_flag_enabled?}
           ::Emulator::Cpu::Instruction::Result.new(cycles: !state.f.carry_flag_enabled? ? 20 : 8)
         end

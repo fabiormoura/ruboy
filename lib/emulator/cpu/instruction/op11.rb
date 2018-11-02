@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op11 < ::Emulator::Cpu::Instruction::Instruction
+      module Op11
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Load
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x11), cycles: 12, label: 'LD DE,d16')
-        end
+        mnemonic_definition 'LD DE,d16', opcode: 0x11
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           load_word_register_from_pc_position_address(register: :de, state: state, mmu: mmu)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
         end

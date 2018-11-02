@@ -1,16 +1,15 @@
 module Emulator
   module Cpu
     module Instruction
-      class Op2c < ::Emulator::Cpu::Instruction::Instruction
+      module Op2c
+        include ::Emulator::Cpu::Instruction::InstructionFunction
         include ::Emulator::Cpu::Instruction::Helper::Arithmetic
 
-        def initialize
-          super(instruction_id: ::Emulator::Cpu::Instruction::InstructionId.new(0x2c), cycles: 4, label: 'INC L')
-        end
+        mnemonic_definition 'INC L', opcode: 0x2C
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
-        def execute(state:, mmu:)
+        def self.execute(state:, mmu:)
           increment_byte_register(register: :l, state: state)
           ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
         end
