@@ -2,37 +2,29 @@ module Emulator
   module Ppu
     module State
       class Machine
-        attr_accessor :active_mode
-        attr_reader :ppu
-
-        state_machine :state, initial: :oam_search do
-          event :oam_search_completed do
-            transition [:oam_search] => :pixel_transfer
-          end
-
-          event :pixel_transfer_completed do
-            transition [:pixel_transfer] => :h_blank
-          end
-
-          event :h_blank_completed do
-            transition [:h_blank] => :oam_search, if: lambda {|machine| !machine.ppu.lcd_y.v_blank_period?}
-            transition [:h_blank] => :v_blank, if: lambda {|machine| machine.ppu.lcd_y.v_blank_period?}
-          end
-
-          event :v_blank_completed do
-            transition [:v_blank] => :oam_search, if: lambda {|machine| !machine.ppu.lcd_y.v_blank_period?}
-          end
-
-          state :oam_search, value: ::Emulator::Ppu::State::Modes::OAM_SEARCH
-          state :pixel_transfer, value: ::Emulator::Ppu::State::Modes::PIXEL_TRANSFER
-          state :h_blank, value: ::Emulator::Ppu::State::Modes::H_BLANK
-          state :v_blank, value: ::Emulator::Ppu::State::Modes::V_BLANK
-        end
+        attr_reader :active_mode
 
         # @param [::Emulator::Ppu::Ppu] ppu
         def initialize(ppu:)
           @ppu = ppu
+          @active_mode = ::Emulator::Ppu::State::Modes::OAM_SEARCH
           super()
+        end
+
+        def oam_search_completed
+          @active_mode = ::Emulator::Ppu::State::Modes::PIXEL_TRANSFER
+        end
+
+        def pixel_transfer_completed
+          @active_mode = ::Emulator::Ppu::State::Modes::H_BLANK
+        end
+
+        def h_blank_completed
+          @active_mode = @ppu.lcd_y.v_blank_period? ? ::Emulator::Ppu::State::Modes::V_BLANK : ::Emulator::Ppu::State::Modes::OAM_SEARCH
+        end
+
+        def v_blank_completed
+          @active_mode = ::Emulator::Ppu::State::Modes::OAM_SEARCH unless @ppu.lcd_y.v_blank_period?
         end
       end
     end

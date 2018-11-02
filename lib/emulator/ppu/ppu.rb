@@ -20,7 +20,7 @@ module Emulator
         return if idle?
         refresh_cycles!
 
-        case @machine.state
+        case @machine.active_mode
         when ::Emulator::Ppu::State::Modes::OAM_SEARCH
           tick_oam_search
         when ::Emulator::Ppu::State::Modes::PIXEL_TRANSFER
@@ -35,13 +35,13 @@ module Emulator
       end
 
       def idle?
-        @cycles < @machine.state.required_cycles
+        @cycles < @machine.active_mode.required_cycles
       end
 
       private :idle?
 
       def refresh_cycles!
-        @cycles = @cycles % @machine.state.required_cycles
+        @cycles = @cycles % @machine.active_mode.required_cycles
       end
 
       private :refresh_cycles!
