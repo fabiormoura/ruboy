@@ -2490,5 +2490,39 @@ RSpec.describe Emulator::Cpu::Cpu do
         end
       end
     end
+
+    context "AND (HL)" do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xA6, cycles: 8, state: state))
+      end
+
+      it 'should execute instruction' do
+        mmu[0x00] = 0xA6
+        mmu[0x2233] = 0b1001_1001
+
+        state.hl.write_value(0x2233)
+        state.a.write_value(0b0001_1001)
+
+        state.f.toggle_half_carry_flag(false)
+        state.f.toggle_carry_flag(true)
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x22, l: 0x33, a: 0b0001_1001, f: 0b0010_0000)
+      end
+
+      it 'should enable zero flag when result is zero' do
+        mmu[0x00] = 0xA6
+        mmu[0x2233] = 0x0
+
+        state.hl.write_value(0x2233)
+        state.a.write_value(0x0)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, h: 0x22, l: 0x33, a: 0x0, f: 0b1010_0000)
+      end
+    end
   end
 end

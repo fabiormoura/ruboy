@@ -134,6 +134,7 @@ module Emulator
             ::Emulator::Cpu::Instruction::Op7f,
             ::Emulator::Cpu::Instruction::Op86,
             ::Emulator::Cpu::Instruction::Op90,
+            ::Emulator::Cpu::Instruction::Opa6,
             ::Emulator::Cpu::Instruction::Opa8,
             ::Emulator::Cpu::Instruction::Opa9,
             ::Emulator::Cpu::Instruction::Opaa,
@@ -167,6 +168,7 @@ module Emulator
             ::Emulator::Cpu::Instruction::Opea,
             ::Emulator::Cpu::Instruction::Opf0,
             ::Emulator::Cpu::Instruction::Opf1,
+            ::Emulator::Cpu::Instruction::Opf3,
             ::Emulator::Cpu::Instruction::Opf5,
             ::Emulator::Cpu::Instruction::Opfe
         ].freeze

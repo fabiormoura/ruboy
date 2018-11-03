@@ -99,6 +99,17 @@ module Emulator
             end
 
             protected :or_byte_register
+
+            # @param [Symbol] register
+            # @param [Integer] value
+            # @param [::Emulator::Cpu::State] state
+            def and_byte_register(register:, value:, state:)
+              updated_value = state.send(register).read_value & value
+              state.send(register).write_value(updated_value)
+              ::Emulator::Cpu::Instruction::Helper::Flags::And.update_register_flags(state: state, value: updated_value)
+            end
+
+            protected :and_byte_register
           end
         end
       end
