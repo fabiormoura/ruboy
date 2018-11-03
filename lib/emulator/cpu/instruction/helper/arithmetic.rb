@@ -23,10 +23,9 @@ module Emulator
             # @param [::Emulator::Cpu::State] state
             def decrement_byte_register(register:, state:)
               value = state.send(register).read_value
+              updated_value = (value - 1) & 0xFF
 
-              state.send(register).write_value(value - 1)
-
-              updated_value = state.send(register).read_value
+              state.send(register).write_value(updated_value)
 
               ::Emulator::Cpu::Instruction::Helper::Flags::Decrement.update_register_flags(state: state, value: value, updated_value: updated_value)
             end
@@ -89,6 +88,17 @@ module Emulator
             end
 
             protected :xor_byte_register
+
+            # @param [Symbol] register
+            # @param [Integer] value
+            # @param [::Emulator::Cpu::State] state
+            def or_byte_register(register:, value:, state:)
+              updated_value = state.send(register).read_value | value
+              state.send(register).write_value(updated_value)
+              ::Emulator::Cpu::Instruction::Helper::Flags::Or.update_register_flags(state: state, value: updated_value)
+            end
+
+            protected :or_byte_register
           end
         end
       end

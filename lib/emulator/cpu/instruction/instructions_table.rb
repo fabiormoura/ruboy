@@ -141,6 +141,7 @@ module Emulator
             ::Emulator::Cpu::Instruction::Opac,
             ::Emulator::Cpu::Instruction::Opad,
             ::Emulator::Cpu::Instruction::Opaf,
+            ::Emulator::Cpu::Instruction::Opb1,
             ::Emulator::Cpu::Instruction::Opbe,
             ::Emulator::Cpu::Instruction::Opc0,
             ::Emulator::Cpu::Instruction::Opc1,

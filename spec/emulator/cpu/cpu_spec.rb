@@ -14,9 +14,10 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
 
       it 'should execute instruction' do
-
         mmu[0x00] = 0x00
+
         subject.tick
+
         expect(state).to match_cpu_state(pc: 0x1)
       end
     end
@@ -2395,7 +2396,7 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
-    context "ADD A,HL" do
+    context 'ADD A,HL' do
       before do
         expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x86, cycles: 8, state: state))
       end
@@ -2448,6 +2449,45 @@ RSpec.describe Emulator::Cpu::Cpu do
         subject.tick
 
         expect(state).to match_cpu_state(pc: 0x1, a: 0b1111_1110, h: 0x20, l: 0x20, f: 0b0011_0000)
+      end
+    end
+
+    [
+        {register: :c, instruction: 0xB1}
+    ].each do |options|
+      register = options[:register]
+      instruction = options[:instruction]
+
+      context "OR #{register.to_s.upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 4, state: state))
+        end
+
+        it 'should execute instruction' do
+          mmu[0x00] = instruction
+
+          state.send(register).write_value(0b1100_0000)
+          state.a.write_value(0b0001_1001)
+
+          state.f.toggle_half_carry_flag(true)
+          state.f.toggle_carry_flag(true)
+          state.f.toggle_subtract_flag(true)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0b1100_0000, a: 0b1101_1001)
+        end
+
+        it 'should enable zero flag when result is zero' do
+          mmu[0x00] = instruction
+
+          state.send(register).write_value(0x0)
+          state.a.write_value(0x0)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: 0x1, :"#{register}" => 0x0, a: 0x0, f: 0b1000_0000)
+        end
       end
     end
   end
