@@ -2452,6 +2452,55 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'ADD A,A' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0x87, cycles: 4, state: state))
+      end
+
+      it 'should execute instruction' do
+        mmu[0x00] = 0x87
+        mmu[0x2020] = 0x02
+
+        state.a.write_value 0x01
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, :a => 0x02)
+      end
+
+      it 'should reset subtract flag' do
+        mmu[0x00] = 0x87
+
+        state.a.write_value 0x01
+
+        state.f.toggle_subtract_flag(true)
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0x02, f: 0b0000_0000)
+      end
+
+      it 'should set half carry flag' do
+        mmu[0x00] = 0x87
+
+        state.a.write_value 0b0000_1000
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b0001_0000, f: 0b0010_0000)
+      end
+
+      it 'should set carry flag' do
+        mmu[0x00] = 0x87
+
+        state.a.write_value 0b1111_1111
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x1, a: 0b1111_1110, f: 0b0011_0000)
+      end
+    end
+
     [
         {register: :c, instruction: 0xB1}
     ].each do |options|
