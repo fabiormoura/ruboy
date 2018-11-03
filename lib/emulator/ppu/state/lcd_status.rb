@@ -2,7 +2,7 @@ module Emulator
   module Ppu
     module State
       class LcdStatus
-        LCD_STATUS_BYTE = 0xFF41.freeze
+        LCD_STATUS_RAM_ADDRESS = 0xFF41.freeze
         MODE_FLAG_RESET_MASK = 0b1111_1100.freeze
         OAM_SEARCH_MODE_FLAG_BITS = 0b10.freeze
         PIXEL_TRANSFER_MODE_FLAG_BITS = 0b11.freeze
@@ -19,7 +19,7 @@ module Emulator
 
         # @param [::Emulator::Ppu::Event::PpuModeTransitioned] event
         def on_ppu_mode_transitioned(event)
-          lcd_status = @mmu[LCD_STATUS_BYTE] & MODE_FLAG_RESET_MASK
+          lcd_status = @mmu[LCD_STATUS_RAM_ADDRESS] & MODE_FLAG_RESET_MASK
           case event.active_mode
           when ::Emulator::Ppu::State::Modes::OAM_SEARCH
             lcd_status |= OAM_SEARCH_MODE_FLAG_BITS
@@ -32,7 +32,7 @@ module Emulator
           else
             raise NotImplementedError
           end
-          @mmu[LCD_STATUS_BYTE] = lcd_status
+          @mmu[LCD_STATUS_RAM_ADDRESS] = lcd_status
         end
       end
     end
