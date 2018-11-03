@@ -1263,6 +1263,22 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    context 'JR a16' do
+      before do
+        expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: 0xC3, cycles: 16, state: state))
+      end
+
+      it 'should increment when offset is positive' do
+        mmu[0x00] = 0xC3
+        mmu[0x01] = 0x10
+        mmu[0x02] = 0x20
+
+        subject.tick
+
+        expect(state).to match_cpu_state(pc: 0x2010)
+      end
+    end
+
     [
         {source_register: :b, target_register: :b, instruction: 0x40},
         {source_register: :c, target_register: :b, instruction: 0x41},

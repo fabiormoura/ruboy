@@ -9,6 +9,13 @@ module Emulator
           class_methods do
             # @param [::Emulator::Cpu::State] state
             # @param [::Emulator::Mmu] mmu
+            def jump_to_immediate_word_value(state:, mmu:)
+              jump_address = mmu[state.pc.read_value + 1] << 8 | mmu[state.pc.read_value]
+              state.pc.write_value(jump_address)
+            end
+
+            # @param [::Emulator::Cpu::State] state
+            # @param [::Emulator::Mmu] mmu
             def jump_to_signed_byte_offset(state:, mmu:)
               jump_address = signed_byte_value(mmu[state.pc.read_value])
               state.pc.increment

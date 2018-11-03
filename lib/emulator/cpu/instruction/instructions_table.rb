@@ -144,6 +144,7 @@ module Emulator
             ::Emulator::Cpu::Instruction::Opbe,
             ::Emulator::Cpu::Instruction::Opc0,
             ::Emulator::Cpu::Instruction::Opc1,
+            ::Emulator::Cpu::Instruction::Opc3,
             ::Emulator::Cpu::Instruction::Opc4,
             ::Emulator::Cpu::Instruction::Opc5,
             ::Emulator::Cpu::Instruction::Opc8,
