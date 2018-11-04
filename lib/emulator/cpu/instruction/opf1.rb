@@ -7,7 +7,7 @@ module Emulator
 
         mnemonic_definition 'POP AF', opcode: 0xF1
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

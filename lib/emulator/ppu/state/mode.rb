@@ -9,6 +9,7 @@ module Emulator
         def initialize(name:, required_cycles:)
           @name = name
           @required_cycles = required_cycles
+          freeze
         end
 
         def ==(other)

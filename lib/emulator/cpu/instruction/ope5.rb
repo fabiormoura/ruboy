@@ -7,7 +7,7 @@ module Emulator
 
         mnemonic_definition 'PUSH HL', opcode: 0xE5
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 16).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 16)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

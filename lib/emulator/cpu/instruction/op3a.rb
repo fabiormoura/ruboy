@@ -7,7 +7,7 @@ module Emulator
 
         mnemonic_definition 'LD A,(HL-)', opcode: 0x3A
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

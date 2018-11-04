@@ -7,7 +7,7 @@ module Emulator
 
         mnemonic_definition 'JR r8', opcode: 0x18
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

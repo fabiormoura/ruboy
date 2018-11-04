@@ -7,8 +7,8 @@ module Emulator
 
         mnemonic_definition 'CALL Z,a16', opcode: 0xCC
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 24).freeze
-        NOP_RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 24)
+        NOP_RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

@@ -7,8 +7,8 @@ module Emulator
 
         mnemonic_definition 'JR NZ,r8', opcode: 0x20
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
-        NOP_RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
+        NOP_RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

@@ -7,7 +7,7 @@ module Emulator
 
         mnemonic_definition 'INC C', opcode: 0x0C
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

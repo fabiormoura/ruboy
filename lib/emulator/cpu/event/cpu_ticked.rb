@@ -10,6 +10,7 @@ module Emulator
           @opcode = opcode
           @cycles = cycles
           @state = state
+          freeze
         end
 
         def ==(other)

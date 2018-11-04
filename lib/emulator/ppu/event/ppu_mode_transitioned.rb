@@ -9,6 +9,7 @@ module Emulator
         def initialize(previous_mode:, active_mode:)
           @previous_mode = previous_mode
           @active_mode = active_mode
+          freeze
         end
 
         def ==(other)

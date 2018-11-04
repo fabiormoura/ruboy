@@ -7,7 +7,7 @@ module Emulator
 
         mnemonic_definition 'LD B,d8', opcode: 0x06
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu

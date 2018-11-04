@@ -6,7 +6,7 @@ module Emulator
 
         mnemonic_definition 'LD D,H', opcode: 0x54
 
-        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
 
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
