@@ -1935,6 +1935,40 @@ RSpec.describe Emulator::Cpu::Cpu do
       end
     end
 
+    [
+        {destination_address: 0x00, instruction: 0xC7},
+        {destination_address: 0x10, instruction: 0xD7},
+        {destination_address: 0x20, instruction: 0xE7},
+        {destination_address: 0x30, instruction: 0xF7},
+        {destination_address: 0x08, instruction: 0xCF},
+        {destination_address: 0x18, instruction: 0xDF},
+        {destination_address: 0x28, instruction: 0xEF},
+        {destination_address: 0x38, instruction: 0xFF}
+    ].each do |options|
+      destination_address = options[:destination_address]
+      instruction = options[:instruction]
+
+      context "RST #{destination_address.to_s(16).upcase}" do
+        before do
+          expect(channel).to receive(:announce).with(::Emulator::Cpu::Event::CpuTicked.new(opcode: instruction, cycles: 16, state: state))
+        end
+
+        it 'should execute instruction' do
+          state.pc.write_value(0x2020)
+
+          mmu[0x2020] = instruction
+
+          state.sp.write_value(0xFFFE)
+
+          subject.tick
+
+          expect(state).to match_cpu_state(pc: destination_address, sp: 0xFFFC)
+          expect(mmu[0xFFFD]).to eq(0x20)
+          expect(mmu[0xFFFC]).to eq(0x21)
+        end
+      end
+    end
+
 
     [
         {register: :c, instruction: 0x11},
