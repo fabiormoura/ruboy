@@ -7,11 +7,14 @@ module Emulator
 
         mnemonic_definition 'RET C', opcode: 0xD8
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 20).freeze
+        NOP_RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           return_address(state: state, mmu: mmu) {state.f.carry_flag_enabled?}
-          ::Emulator::Cpu::Instruction::Result.new(cycles: state.f.carry_flag_enabled? ? 20 : 8)
+          state.f.carry_flag_enabled? ? RESULT : NOP_RESULT
         end
       end
     end

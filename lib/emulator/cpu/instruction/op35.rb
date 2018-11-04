@@ -7,6 +7,8 @@ module Emulator
 
         mnemonic_definition 'DEC (HL)', opcode: 0x35
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
@@ -16,7 +18,7 @@ module Emulator
           updated_value = mmu[addr]
 
           ::Emulator::Cpu::Instruction::Helper::Flags::Decrement.update_register_flags(state: state, value: value, updated_value: updated_value)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
+          RESULT
         end
       end
     end

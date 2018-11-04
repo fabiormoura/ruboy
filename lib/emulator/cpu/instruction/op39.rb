@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'ADD HL,SP', opcode: 0x39
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           add_word_registers(primary_register: :hl, secondary_register: :sp, state: state)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
+          RESULT
         end
       end
     end

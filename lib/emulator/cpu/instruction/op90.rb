@@ -6,6 +6,8 @@ module Emulator
 
         mnemonic_definition 'SUB B', opcode: 0x90
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
@@ -16,7 +18,7 @@ module Emulator
           ::Emulator::Cpu::Instruction::Helper::Flags::Subtraction.update_register_flags(state: state, operand_value: operand_value, subtracted_value: subtracted_value)
 
           state.a.write_value(subtracted_value)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
+          RESULT
         end
       end
     end

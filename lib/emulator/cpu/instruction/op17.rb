@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'RLA', opcode: 0x17
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           rotate_left_byte_register_using_carry_flag(register: :a, state: state)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
+          RESULT
         end
       end
     end

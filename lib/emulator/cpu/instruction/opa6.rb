@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'AND (HL)', opcode: 0xA6
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           and_byte_register(register: :a, value: mmu[state.hl.read_value], state: state)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
+          RESULT
         end
       end
     end

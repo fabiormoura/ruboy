@@ -6,11 +6,13 @@ module Emulator
 
         mnemonic_definition 'LD (HL),E', opcode: 0x73
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           mmu[state.hl.read_value] = state.e.read_value
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
+          RESULT
         end
       end
     end

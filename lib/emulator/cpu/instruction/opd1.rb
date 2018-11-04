@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'POP DE', opcode: 0xD1
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           pop_stack_onto_word_register(register: :de, state: state, mmu: mmu)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 12)
+          RESULT
         end
       end
     end

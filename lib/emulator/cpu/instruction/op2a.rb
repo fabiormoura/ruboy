@@ -7,12 +7,14 @@ module Emulator
 
         mnemonic_definition 'LD A,(HL+)', opcode: 0x2A
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           load_byte_register_from_address(address: state.hl.read_value, register: :a, state: state, mmu: mmu)
           state.hl.write_value(state.hl.read_value + 0x01)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
+          RESULT
         end
       end
     end

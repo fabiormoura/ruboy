@@ -7,11 +7,14 @@ module Emulator
 
         mnemonic_definition 'CALL NC,a16', opcode: 0xD4
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 24).freeze
+        NOP_RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 12).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           call_address(state: state, mmu: mmu) {!state.f.carry_flag_enabled?}
-          ::Emulator::Cpu::Instruction::Result.new(cycles: !state.f.carry_flag_enabled? ? 24 : 12)
+          !state.f.carry_flag_enabled? ? RESULT : NOP_RESULT
         end
       end
     end

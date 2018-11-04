@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'LD (BC),A', opcode: 0x02
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           load_word_register_address_from_byte_register(address_register: :bc, register: :a, state: state, mmu: mmu)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
+          RESULT
         end
       end
     end

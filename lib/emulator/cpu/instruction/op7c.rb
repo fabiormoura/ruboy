@@ -6,11 +6,13 @@ module Emulator
 
         mnemonic_definition 'LD A,H', opcode: 0x7C
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           state.a.write_value state.h.read_value
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
+          RESULT
         end
       end
     end

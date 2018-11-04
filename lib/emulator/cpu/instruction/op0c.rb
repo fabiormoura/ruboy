@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'INC C', opcode: 0x0C
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           increment_byte_register(register: :c, state: state)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
+          RESULT
         end
       end
     end

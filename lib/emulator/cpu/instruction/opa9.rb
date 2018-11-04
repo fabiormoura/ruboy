@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'XOR C', opcode: 0xA9
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           xor_byte_register(register: :a, value: state.c.read_value, state: state)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
+          RESULT
         end
       end
     end

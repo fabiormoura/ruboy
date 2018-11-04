@@ -6,6 +6,8 @@ module Emulator
 
         mnemonic_definition 'CP d8', opcode: 0xFE
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 8).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
@@ -14,8 +16,10 @@ module Emulator
 
           subtracted_value = (state.a.read_value - operand_value) & 0xFF
 
-          ::Emulator::Cpu::Instruction::Helper::Flags::Subtraction.update_register_flags(state: state, operand_value: operand_value, subtracted_value: subtracted_value)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 8)
+          ::Emulator::Cpu::Instruction::Helper::Flags::Subtraction.update_register_flags(state: state,
+                                                                                         operand_value: operand_value,
+                                                                                         subtracted_value: subtracted_value)
+          RESULT
         end
       end
     end

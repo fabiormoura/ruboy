@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'CALL a16', opcode: 0xCD
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 24).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           call_address(state: state, mmu: mmu)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 24)
+          RESULT
         end
       end
     end

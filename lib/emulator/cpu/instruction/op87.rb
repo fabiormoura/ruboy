@@ -7,11 +7,13 @@ module Emulator
 
         mnemonic_definition 'ADD A,A', opcode: 0x87
 
+        RESULT = ::Emulator::Cpu::Instruction::Result.new(cycles: 4).freeze
+
         # @param [::Emulator::Cpu::State] state
         # @param [::Emulator::Mmu] mmu
         def self.execute(state:, mmu:)
           add_value_to_byte_register(register: :a, operand_value: state.a.read_value, state: state)
-          ::Emulator::Cpu::Instruction::Result.new(cycles: 4)
+          RESULT
         end
       end
     end
